@@ -221,26 +221,36 @@ const art=(p,hero)=>HAS_PHOTO?photoArt(p,hero):artSvg(p);
 
 
 /* ============ ФОН-СЦЕНА: герои на фоне страницы, кадр меняется при прокрутке ============ */
-const SCENES={A:{z:1,cx:.5,cy:.5,mx:'50%'},B:{z:1.7,cx:.38,cy:.45,mx:'30%'},C:{z:1.9,cx:.64,cy:.42,mx:'75%'},D:{z:1.8,cx:.8,cy:.35,mx:'90%'},F:{z:2.3,cx:.36,cy:.42,mx:'28%'}};
+const SCENES={A:{z:1,cx:.5,cy:.5,mx:'50%'},B:{z:1.7,cx:.38,cy:.45,mx:'30%'},F:{z:2.3,cx:.36,cy:.42,mx:'28%'}};
 const bp2=(z,c)=>z>1?((c*z-.5)/(z-1)*100).toFixed(1)+'%':'50%';
-let sceneBase='A',sceneHover=null,px=0,py=0;
+const DEVSCENE=new URLSearchParams(location.search).get('scene');
+let sceneBase=DEVSCENE||'A',sceneHover=null,px=0,py=0;
 function buildStage(){
   document.body.classList.add('photo-mode');
   const st=document.createElement('div');st.id='stage';
   st.innerHTML=Object.entries(SCENES).map(([k,s])=>`<div class="layer" data-s="${k}" style="--bs:${s.z*100}% auto;--bp:${bp2(s.z,s.cx)} ${bp2(s.z,s.cy)};--mx:${s.mx};background-image:url(${PHOTO})"></div>`).join('')+'<div class="glints"></div>';
-  document.body.prepend(st); setScene();
+  document.body.prepend(st);
+  const sky=document.createElement('div');sky.id='sky';sky.setAttribute('aria-hidden','true');sky.innerHTML=window.SKY?window.SKY.svg:'';document.body.prepend(sky);
+  const sp=new URLSearchParams(location.search).get('scene'); if(sp)sceneBase=sp;
+  setScene(); skyLoop();
 }
-function setScene(){const k=sceneHover||sceneBase;$$('#stage .layer').forEach(l=>l.classList.toggle('on',l.dataset.s===k));}
+function setScene(){const k=sceneHover||sceneBase;$$('#stage .layer').forEach(l=>l.classList.toggle('on',l.dataset.s===k));document.body.classList.toggle('sky-on',k==='S');}
+function skyLoop(){
+  const t0=performance.now();
+  (function f(){requestAnimationFrame(f); if(!document.body.classList.contains('sky-on')||!window.SKY)return;
+    const e=document.getElementById('how'); let p=.5; const dp=new URLSearchParams(location.search).get('p'); if(dp!==null)p=+dp; else if(e){const r=e.getBoundingClientRect();p=Math.max(0,Math.min(1,(innerHeight-r.top)/(innerHeight+r.height)));}
+    window.SKY.update(p,(performance.now()-t0)/1000);})();
+}
 function sceneForRoute(page,arg){
   if(!HAS_PHOTO)return; sceneHover=null;
   if(page==='product'){const p=PRODUCTS.find(x=>x.id===+arg);sceneBase=p&&p.who.length===1?(p.vip?'F':'B'):'A';}
-  else sceneBase='A';
+  else sceneBase=DEVSCENE||'A';
   setScene(); if(!page)onSceneScroll();
 }
 function onSceneScroll(){
-  if(!HAS_PHOTO)return; par(); if(route()!=='/')return;
+  if(!HAS_PHOTO)return; par(); if(DEVSCENE||route()!=='/')return;
   const m=innerHeight*.5; let k='A';
-  [['catalog','B'],['how','C'],['faq','D']].forEach(([id,s])=>{const e=document.getElementById(id);if(e&&e.getBoundingClientRect().top<m)k=s;});
+  [['how','S'],['faq','A']].forEach(([id,s])=>{const e=document.getElementById(id);if(e&&e.getBoundingClientRect().top<m)k=s;});
   if(k!==sceneBase){sceneBase=k;if(!sceneHover)setScene();}
 }
 function par(){const st=$('#stage');if(st)st.style.transform=`translate3d(${(-px*22).toFixed(1)}px,${(-py*14-Math.min(scrollY*.04,40)).toFixed(1)}px,0)`;}

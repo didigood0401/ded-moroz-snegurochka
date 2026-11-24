@@ -320,3 +320,26 @@ svg .glow{animation:star 2.2s ease-in-out infinite}
   .photo-mode .hero,.photo-mode section,.photo-mode .narrow,.photo-mode .product{padding-right:5vw}
   .photo-mode .grid,.photo-mode .steps{grid-template-columns:1fr}
 }
+
+/* ===== сцена «сани с оленями» ===== */
+#sky{position:fixed;inset:0;z-index:0;opacity:0;transition:opacity 1.5s ease;pointer-events:none}
+#sky svg{width:100%;height:100%;display:block}
+body.sky-on #sky{opacity:1}
+body.sky-on #stage{opacity:0}
+#stage{transition:transform .5s ease-out,opacity 1.2s ease}
+#sky .leg{transform-box:fill-box;transform-origin:50% 0;animation:legs .46s ease-in-out infinite alternate}
+#sky .leg.b{animation-direction:alternate-reverse}
+#sky .gal{animation:gallop .46s ease-in-out infinite alternate}
+@keyframes legs{from{transform:rotate(-13deg)}to{transform:rotate(13deg)}}
+@keyframes gallop{from{transform:translateY(-3px)}to{transform:translateY(4px)}}
+#sky .tw{transform-box:fill-box;transform-origin:center;animation:star 2.6s ease-in-out infinite}
+#sky .tw.d2{animation-delay:-.9s}#sky .tw.d3{animation-delay:-1.7s}
+#sky .aur{animation:aur 14s ease-in-out infinite alternate}#sky .aur.a2{animation-duration:19s}
+@keyframes aur{from{transform:translateY(-14px) skewX(-2deg)}to{transform:translateY(18px) skewX(2deg)}}
+#sky .smoke{transform-box:fill-box;animation:smoke 5s linear infinite}#sky .smoke.s2{animation-delay:-2.5s}
+@keyframes smoke{from{transform:translate(0,0) scale(.6);opacity:.4}to{transform:translate(18px,-60px) scale(2.2);opacity:0}}
+#sky .spk{animation:spk 1.5s ease-out infinite}
+@keyframes spk{from{opacity:.95}to{opacity:0}}
+
+#sky .smoke{animation-name:smoke2}@keyframes smoke2{from{transform:translate(0,0) scale(.6);opacity:.35}to{transform:translate(14px,-46px) scale(1.7);opacity:0}}
+
