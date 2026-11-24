@@ -221,7 +221,7 @@ const art=(p,hero)=>HAS_PHOTO?photoArt(p,hero):artSvg(p);
 
 
 /* ============ ФОН-СЦЕНА: герои на фоне страницы, кадр меняется при прокрутке ============ */
-const SCENES={A:{z:1,cx:.5,cy:.5,mx:'50%'},B:{z:1.7,cx:.38,cy:.45,mx:'30%'},F:{z:2.3,cx:.36,cy:.42,mx:'28%'},M:{u:'images/snowman.jpg',bs:'cover',bp:'50% 38%',mx:'40%'},T:{u:'images/tree2.jpg',bs:'cover',bp:'50% 55%',mx:'50%'}};
+const SCENES={A:{z:1,cx:.5,cy:.5,mx:'50%'},M:{u:'images/snowman.jpg',bs:'cover',bp:'50% 38%',mx:'40%'},T:{u:'images/tree2.jpg',bs:'cover',bp:'50% 55%',mx:'50%'}};
 const bp2=(z,c)=>z>1?((c*z-.5)/(z-1)*100).toFixed(1)+'%':'50%';
 const DEVSCENE=new URLSearchParams(location.search).get('scene');
 let sceneBase=DEVSCENE||'A',sceneHover=null,px=0,py=0;
@@ -244,7 +244,7 @@ function skyLoop(){
 }
 function sceneForRoute(page,arg){
   if(!HAS_PHOTO)return; sceneHover=null;
-  if(page==='product'){const p=PRODUCTS.find(x=>x.id===+arg);sceneBase=p&&p.who.length===1?(p.vip?'F':'B'):'A';}
+  if(page==='product'){const p=PRODUCTS.find(x=>x.id===+arg);sceneBase='A';}
   else sceneBase=DEVSCENE||'A';
   setScene(); if(!page)onSceneScroll();
 }
@@ -387,7 +387,7 @@ function bind(page,arg){
   $$('[data-scroll]').forEach(a=>a.onclick=e=>{e.preventDefault();const go=()=>{const el=document.getElementById(a.dataset.scroll);el&&el.scrollIntoView({behavior:'smooth'});};
     if(route()!=='/'){location.hash='#/';setTimeout(go,1100);}else go();});
   if(HAS_PHOTO&&!page)$$('.card').forEach(c=>{const p=PRODUCTS.find(x=>x.id===+c.getAttribute('href').split('/').pop());if(!p)return;
-    c.onmouseenter=()=>{sceneHover=p.who.length===1?(p.vip?'F':'B'):'A';setScene();};c.onmouseleave=()=>{sceneHover=null;setScene();};});
+    c.onmouseenter=()=>{sceneHover=null;};c.onmouseleave=()=>{sceneHover=null;setScene();};});
   if(page==='product')bindProduct(+arg);
   if(page==='cart')bindCart();
   if(page==='checkout')bindCheckout();
