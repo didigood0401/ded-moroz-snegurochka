@@ -184,7 +184,7 @@ let busyNav=false,lastClick={x:innerWidth/2,y:innerHeight/2};
 addEventListener('pointerdown',e=>{lastClick={x:e.clientX,y:e.clientY};},true);
 const route=()=>location.hash.replace(/^#/,'')||'/';
 async function render(first){
-  if(busyNav)return; busyNav=true; const r=route();
+  if(busyNav)return; kill3d(); busyNav=true; const r=route();
   curtain.style.setProperty('--cx',lastClick.x+'px');curtain.style.setProperty('--cy',lastClick.y+'px');
   if(!first){curtain.className='curtain in';await new Promise(res=>setTimeout(res,450));}
   window.scrollTo(0,0);
@@ -194,7 +194,7 @@ async function render(first){
   else if(page==='checkout')app.innerHTML=viewCheckout();
   else if(page==='done')app.innerHTML=viewDone(arg);
   else app.innerHTML=viewHome();
-  bind(page,arg);observeReveal();
+  bind(page,arg);observeReveal();mount3D(page,arg);
   if(!first){curtain.className='curtain out';setTimeout(()=>{curtain.className='curtain';},520);}
   busyNav=false;
   if(route()!==r)render();
@@ -204,6 +204,16 @@ addEventListener('scroll',()=>$('#header').classList.toggle('scrolled',scrollY>3
 function observeReveal(){
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');io.unobserve(e.target);}}),{threshold:.1});
   $$('.reveal').forEach(el=>{el.style.transitionDelay=(el.dataset.d||0)+'ms';io.observe(el);});
+}
+
+/* ============ 3D-ГЕРОИ (three.js, запасной вариант — SVG) ============ */
+let m3d=[];
+function kill3d(){m3d.forEach(m=>m.dispose());m3d=[];}
+async function mount3D(page,arg){
+  const el=page==='product'?$('.p-art'):(!page?$('.hero-art'):null); if(!el)return;
+  const p=page==='product'?PRODUCTS.find(x=>x.id===+arg):PRODUCTS[3]; if(!p)return;
+  try{const mod=await import('./hero3d.js'); if(!el.isConnected)return; m3d.push(mod.mount(el,{who:p.who,vip:p.vip})); el.dataset.three='1'; el.classList.add('is3d');}
+  catch(e){console.warn('3D недоступно, показываю SVG',e);}
 }
 
 /* ============ СТРАНИЦЫ ============ */
@@ -394,7 +404,7 @@ function bindCheckout(){
   build();addEventListener('resize',build);
 })();
 document.addEventListener('pointermove',e=>{
-  const el=e.target.closest&&e.target.closest('.hero-art,.p-art'); if(!el)return;
+  const el=e.target.closest&&e.target.closest('.hero-art,.p-art'); if(!el||el.dataset.three)return;
   const r=el.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
   el.style.transform=`perspective(900px) rotateY(${x*9}deg) rotateX(${-y*9}deg)`;
 });
