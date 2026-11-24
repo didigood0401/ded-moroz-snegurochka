@@ -231,6 +231,9 @@ async function mount3D(page,arg){
 }
 
 /* ============ СТРАНИЦЫ ============ */
+const SHOTS=[['Снегурочка',2.6,.66,.4],['Сказочный дом',2.6,.84,.3],['Мешок с подарками',2.6,.2,.82],['Ёлки в огнях',2.4,.12,.3]];
+const gallery=()=>HAS_PHOTO?`<section id="gallery"><h2 class="sec-title reveal">Атмосфера праздника</h2><p class="sec-sub reveal">Так выглядит сказка, которую мы приносим в ваш дом</p>
+  <div class="gallery">${SHOTS.map((s,i)=>`<figure class="shot reveal" data-d="${i*90}"><div class="ph" style="background-image:url(${PHOTO});background-size:${s[1]*100}% auto;background-position:${bp(s[1],s[2],s[3])}"></div><figcaption>${s[0]}</figcaption></figure>`).join('')}</div></section>`:'';
 function viewHome(){
   return `<div class="page">
   <div class="hero">
@@ -261,6 +264,7 @@ function viewHome(){
       </a>`).join('')}</div>
   </section>
 
+  ${gallery()}
   <section id="how">
     ${firDeco('tl small')}
     <h2 class="sec-title reveal">Как заказать</h2><p class="sec-sub reveal">Как в обычном интернет-магазине</p>
@@ -418,11 +422,11 @@ function bindCheckout(){
   build();addEventListener('resize',build);
 })();
 document.addEventListener('pointermove',e=>{
-  const el=e.target.closest&&e.target.closest('.hero-art,.p-art'); if(!el||el.dataset.three)return;
+  const el=e.target.closest&&e.target.closest('.hero-art,.p-art,.shot'); if(!el||el.dataset.three)return;
   const r=el.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
   el.style.transform=`perspective(900px) rotateY(${x*9}deg) rotateX(${-y*9}deg)`;
 });
-document.addEventListener('pointerout',e=>{const el=e.target.closest&&e.target.closest('.hero-art,.p-art');if(el)el.style.transform='';});
+document.addEventListener('pointerout',e=>{const el=e.target.closest&&e.target.closest('.hero-art,.p-art,.shot');if(el)el.style.transform='';});
 updateCount();
 const _ph=new Image(); const _go=()=>render(true);
 _ph.onload=()=>{HAS_PHOTO=true;_go();}; _ph.onerror=_go; _ph.src=PHOTO;

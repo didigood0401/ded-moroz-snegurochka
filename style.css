@@ -281,3 +281,10 @@ svg .glow{animation:star 2.2s ease-in-out infinite}
 .hero-art.photo{aspect-ratio:4/5;max-height:78vh;max-width:620px;border:3px solid #d9b24a;box-shadow:0 0 0 6px var(--bg),0 0 0 8px #d9b24a,0 30px 60px rgba(10,25,70,.4)}
 .hero-art.photo .ph{animation:kb 18s ease-in-out infinite alternate}
 @keyframes kb{from{transform:scale(1)}to{transform:scale(1.07) translate(-1%,-1%)}}
+
+.gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.shot{position:relative;aspect-ratio:3/4;overflow:hidden;border:3px solid #d9b24a;border-radius:var(--radius);box-shadow:0 18px 40px rgba(10,25,70,.3);transition:transform .25s ease-out;will-change:transform;background:#12306a}
+.shot .ph{transition:transform 1.2s ease}.shot:hover .ph{transform:scale(1.08)}
+.shot figcaption{position:absolute;left:0;right:0;bottom:0;padding:34px 16px 14px;color:#fff;font-family:var(--font-head);font-size:19px;background:linear-gradient(transparent,rgba(5,15,40,.78));z-index:2}
+@media(max-width:1100px){.gallery{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.gallery{grid-template-columns:1fr}}
