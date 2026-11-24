@@ -91,5 +91,73 @@ function update(p,t){
   f.setAttribute('transform',`translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${r.toFixed(2)}) scale(.95)`);
   const tr=document.getElementById('trail'); if(tr)tr.setAttribute('transform',`translate(${x.toFixed(1)} ${(y+8).toFixed(1)}) scale(.95)`);
 }
-window.SKY={svg,update};
+/* ---------- Сцена R: олени в зимнем лесу на закате ---------- */
+function stag(x,y,s,flip,d){
+  const leg=(x0,p)=>`<path d="M${x0} 12 ${p}" stroke="#2a190e" stroke-width="7.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const ant=(c,w)=>`<path d="M62 -104 C54 -130 66 -152 56 -178 M60 -128 C48 -134 44 -146 38 -150 M64 -150 C76 -156 80 -168 76 -178 M58 -166 C52 -170 50 -180 44 -184 M56 -178 C62 -182 62 -190 58 -196" stroke="${c}" stroke-width="${w}" fill="none" stroke-linecap="round"/>`;
+  return `<g transform="translate(${x} ${y}) scale(${flip?-s:s} ${s})"><g class="idle" style="animation-delay:${d}s">
+  <g opacity=".6" transform="translate(12 5)">${ant('#2a1a0e',3.2)}</g>
+  ${leg(-34,'L-38 52 L-35 88')}${leg(-22,'L-20 52 L-22 88')}${leg(28,'L30 52 L27 88')}${leg(38,'L42 52 L45 88')}
+  <g fill="#120b06">${[-35,-22,27,45].map(a=>`<ellipse cx="${a}" cy="90" rx="6.5" ry="3.2"/>`).join('')}</g>
+  <path d="M-46 0 C-46 -22 -10 -30 20 -25 C42 -22 50 -12 47 0 C45 14 20 21 -5 21 C-30 21 -46 14 -46 0Z" fill="url(#rdBodyR)"/>
+  <ellipse cx="0" cy="13" rx="34" ry="8" fill="#d9c9ad" opacity=".5"/>
+  <path d="M-40 -14 C-18 -30 22 -28 46 -14" stroke="#f0c987" stroke-width="2" fill="none" opacity=".5"/>
+  <path d="M-46 -6 C-56 -10 -60 -2 -56 6 C-52 2 -48 2 -46 4Z" fill="#efe4d0"/>
+  <path d="M24 -22 C34 -44 42 -66 50 -88 L70 -82 C64 -62 58 -38 52 -10Z" fill="url(#rdBodyR)"/>
+  <path d="M46 -72 C52 -58 54 -42 52 -26 C46 -40 44 -58 46 -72Z" fill="#cdb893" opacity=".55"/>
+  <path d="M52 -94 C58 -106 76 -106 90 -96 C98 -90 101 -85 97 -82 C88 -78 76 -83 68 -81 C58 -81 50 -86 52 -94Z" fill="url(#rdBodyR)"/>
+  <path d="M56 -98 C48 -108 42 -106 42 -100 C46 -98 50 -96 56 -94Z" fill="#3a2414"/>
+  <circle cx="97" cy="-84" r="3.6" fill="#120b06"/><circle cx="71" cy="-93" r="2.4" fill="#120b06"/><circle cx="70.2" cy="-93.8" r=".8" fill="#fff"/>
+  ${ant('#4a3320',3.8)}${ant('#9a7650',1)}
+  <g class="breath"><circle cx="102" cy="-80" r="5" fill="#dfe9ff" opacity=".5"/></g><g class="breath b2"><circle cx="102" cy="-80" r="6" fill="#dfe9ff" opacity=".4"/></g>
+  </g></g>`;
+}
+function bigFir(x,y,s){
+  const tiers=9, H=tiers*56*s+110*s, top=y-H, cols=['#ffcf6a','#ffcf6a','#ffd98a','#ff6b5a','#8fd0ff'];
+  let o=`<rect x="${x-9*s}" y="${y-30*s}" width="${18*s}" height="${34*s}" fill="#1a1008"/>`, lights='';
+  for(let i=0;i<tiers;i++){
+    const c=top+70*s+i*56*s, w=(42+i*30)*s, h=(92+i*4)*s, by=c+h*.45, ap=c-h*.55, n=5, wd=2*w/n;
+    let d=`M${x} ${ap} L${x+w} ${by}`; for(let k=0;k<n;k++){d+=` Q${(x+w-(k+.5)*wd).toFixed(1)} ${by+16*s} ${(x+w-(k+1)*wd).toFixed(1)} ${by}`;} d+=' Z';
+    o+=`<path d="${d}" fill="url(#gTreeR)"/>`;
+    const y2=c-h*.05;
+    o+=`<path d="M${x} ${ap} L${x+w*.6} ${y2} Q${x+w*.42} ${y2+10*s} ${x+w*.26} ${y2+2*s} Q${x+w*.1} ${y2+13*s} ${x} ${y2+4*s} Q${x-w*.1} ${y2+13*s} ${x-w*.26} ${y2+2*s} Q${x-w*.42} ${y2+10*s} ${x-w*.6} ${y2}Z" fill="#eef4ff" opacity=".88"/>`;
+    for(let k=0;k<n-1;k++){const lx=x+w-(k+1)*wd, ly=by+3*s, ci=(i*3+k)%5, col=cols[ci];
+      lights+=`<circle class="tw ${['','d2','d3'][(i+k)%3]}" cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="${(15*s).toFixed(1)}" fill="${col}" opacity=".5"/><circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="${(3.3*s).toFixed(1)}" fill="#fff6d8"/>`;}
+  }
+  return `<g>${o}${lights}</g>`;
+}
+const orbs=Array.from({length:30},(_,i)=>`<circle class="orb" style="animation-delay:${(-rnd(i+900)*9).toFixed(1)}s;animation-duration:${(7+rnd(i+950)*6).toFixed(1)}s" cx="${(rnd(i+800)*1600).toFixed(0)}" cy="${(520+rnd(i+850)*330).toFixed(0)}" r="${(3+rnd(i+700)*5).toFixed(1)}" fill="url(#orbG)"/>`).join('');
+const farFirs=Array.from({length:34},(_,i)=>fir(i*50-20,700+rnd(i+11)*30,.55+rnd(i+5)*.5)).join('');
+const svgR=`<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+<defs>
+ <linearGradient id="skyR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#050d28"/><stop offset=".5" stop-color="#1b3b72"/><stop offset=".78" stop-color="#6a79ac"/><stop offset=".92" stop-color="#d99a86"/><stop offset="1" stop-color="#f0c08e"/></linearGradient>
+ <linearGradient id="gTreeR" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2c8a62"/><stop offset=".5" stop-color="#14543b"/><stop offset="1" stop-color="#06261a"/></linearGradient>
+ <linearGradient id="rdBodyR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a5236"/><stop offset="1" stop-color="#2a180c"/></linearGradient>
+ <linearGradient id="snGR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4d9d0"/><stop offset=".25" stop-color="#cdd9f0"/><stop offset="1" stop-color="#7f94c4"/></linearGradient>
+ <radialGradient id="orbG"><stop offset="0" stop-color="#fff3b8" stop-opacity="1"/><stop offset=".4" stop-color="#ffd25a" stop-opacity=".55"/><stop offset="1" stop-color="#ffd25a" stop-opacity="0"/></radialGradient>
+ <radialGradient id="winGlow"><stop offset="0" stop-color="#ffc45a" stop-opacity=".7"/><stop offset="1" stop-color="#ffc45a" stop-opacity="0"/></radialGradient>
+ <radialGradient id="auR"><stop offset="0" stop-color="#46f0c0" stop-opacity=".4"/><stop offset=".55" stop-color="#3ab8d8" stop-opacity=".18"/><stop offset="1" stop-color="#7a5cff" stop-opacity="0"/></radialGradient>
+ <radialGradient id="dusk"><stop offset="0" stop-color="#ffb27a" stop-opacity=".7"/><stop offset="1" stop-color="#ffb27a" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="1600" height="900" fill="url(#skyR)"/>
+<ellipse cx="800" cy="200" rx="900" ry="120" fill="url(#auR)" class="aur"/>
+<ellipse cx="800" cy="720" rx="900" ry="170" fill="url(#dusk)"/>
+${stars}
+<g id="bgR"><g opacity=".95" fill="#0a1a38">${farFirs.replace(/#0a2230/g,'#0b1c3c')}</g>
+<path d="M0 730 Q300 690 600 725 T1200 710 T1600 722 V900 H0Z" fill="#1d3466"/>
+${house(520,690,150,100,1)}</g>
+<path d="M0 790 Q400 760 800 785 T1600 770 V900 H0Z" fill="url(#snGR)"/>
+<g id="fgR">
+${bigFir(1540,884,1.05)}
+${stag(1130,690,1.25,false,0)}${stag(1345,712,1.05,true,1.5)}
+<path d="M0 850 Q400 820 800 845 T1600 830 V900 H0Z" fill="#dfe8f7" opacity=".9"/>
+${orbs}
+</g>
+</svg>`;
+function updateR(px,py,t){
+  const a=document.getElementById('bgR'),b=document.getElementById('fgR');
+  if(a)a.setAttribute('transform',`translate(${(px*-8).toFixed(1)} ${(py*-4).toFixed(1)})`);
+  if(b)b.setAttribute('transform',`translate(${(px*-20).toFixed(1)} ${(py*-8).toFixed(1)})`);
+}
+window.SKY={svg,svgR,update,updateR};
 })();
