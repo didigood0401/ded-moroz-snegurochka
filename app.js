@@ -233,12 +233,12 @@ function buildStage(){
   const sky=document.createElement('div');sky.id='sky';sky.setAttribute('aria-hidden','true');sky.innerHTML=window.SKY?window.SKY.svg:'';document.body.prepend(sky);
   const sky2=document.createElement('div');sky2.id='sky2';sky2.className='skyl';sky2.setAttribute('aria-hidden','true');sky2.innerHTML='';const bk=document.createElement('div');bk.id='bokeh';bk.setAttribute('aria-hidden','true');bk.innerHTML=Array.from({length:16},(_,i)=>`<i style="left:${(Math.random()*100).toFixed(1)}%;top:${(Math.random()*100).toFixed(1)}%;width:${(40+Math.random()*110).toFixed(0)}px;height:${(40+Math.random()*110).toFixed(0)}px;animation-delay:-${(Math.random()*20).toFixed(1)}s;animation-duration:${(16+Math.random()*16).toFixed(1)}s"></i>`).join('');document.body.prepend(bk);document.body.prepend(sky2);
   const sp=new URLSearchParams(location.search).get('scene'); if(sp)sceneBase=sp;
-  setScene(); skyLoop();
+  setScene(); skyLoop(); setInterval(onSceneScroll,120);
 }
 function setScene(){const k=sceneHover||sceneBase;$$('#stage .layer').forEach(l=>l.classList.toggle('on',l.dataset.s===k));document.body.classList.toggle('sky-on',k==='S');}
 function skyLoop(){
   const t0=performance.now();
-  (function f(){requestAnimationFrame(f); if(window.SKY&&document.body.classList.contains('sky2-on'))window.SKY.updateR(px,py,0); if(!document.body.classList.contains('sky-on')||!window.SKY)return;
+  (function f(){requestAnimationFrame(f); onSceneScroll(); if(!document.body.classList.contains('sky-on')||!window.SKY)return;
     const e=document.getElementById('how'); let p=.5; const dp=new URLSearchParams(location.search).get('p'); if(dp!==null)p=+dp; else if(e){const r=e.getBoundingClientRect();p=Math.max(0,Math.min(1,(innerHeight-r.top)/(innerHeight+r.height)));}
     window.SKY.update(p,(performance.now()-t0)/1000);})();
 }
