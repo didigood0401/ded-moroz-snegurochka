@@ -442,3 +442,8 @@ body[data-ps=""] #sky2 svg{opacity:.001}
 /* ветки секций: целиком над заголовком, с запасом */
 .fir.small{top:auto;bottom:calc(100% - 38px);width:clamp(90px,9vw,140px)}
 .fir.small{bottom:calc(100% - 52px)}
+
+/* переход между страницами: без цветной шторки, только чистое проявление */
+.curtain{display:none!important}
+.page{animation:pagefade .35s ease both}
+@keyframes pagefade{from{opacity:0}}

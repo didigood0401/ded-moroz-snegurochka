@@ -186,7 +186,7 @@ const route=()=>location.hash.replace(/^#/,'')||'/';
 async function render(first){
   if(busyNav)return; kill3d(); busyNav=true; const r=route();
   curtain.style.setProperty('--cx',lastClick.x+'px');curtain.style.setProperty('--cy',lastClick.y+'px');
-  if(!first){curtain.className='curtain in';await new Promise(res=>setTimeout(res,450));}
+  if(!first){app.style.transition='opacity .22s ease';app.style.opacity='0';await new Promise(res=>setTimeout(res,230));}
   window.scrollTo(0,0);
   const [,page,arg]=r.split('/');
   if(page==='product')app.innerHTML=viewProduct(+arg);
@@ -195,7 +195,7 @@ async function render(first){
   else if(page==='done')app.innerHTML=viewDone(arg);
   else app.innerHTML=viewHome();
   bind(page,arg);observeReveal();mount3D(page,arg);sceneForRoute(page,arg);
-  if(!first){curtain.className='curtain out';setTimeout(()=>{curtain.className='curtain';},520);}
+  if(!first){requestAnimationFrame(()=>{app.style.opacity='1';});}
   busyNav=false;
   if(route()!==r)render();
 }
