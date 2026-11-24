@@ -4,7 +4,7 @@
   --text:#2b1d16; --muted:#6b5a4c; --accent:#b3202a; --accent-text:#fff; --price:#b3202a;
   --sky:#1f4d3a; --ground1:#fbf5e6; --ground2:#e3d6b8; --curtain:#1f4d3a;
   --font-head:Georgia,"Times New Roman",serif; --font-body:"Segoe UI",system-ui,Arial,sans-serif;
-  --radius:4px; --shadow:5px 5px 0 var(--line); --border:2px solid var(--line); --snow:none;
+  --radius:4px; --shadow:5px 5px 0 var(--line); --border:2px solid var(--line); --snow:block;
 }
 [data-theme="night"]{
   --bg:#0d1730; --surface:#14214a; --surface2:#1b2b5c; --line:#2c3f78; --soft-line:#2c3f78;
@@ -220,4 +220,48 @@ input::placeholder,textarea::placeholder{color:var(--muted);opacity:.7}
   .theme-switch span{display:none}
 }
 @media(max-width:560px){.grid,.steps{grid-template-columns:1fr}.step{border-right:0;border-bottom:1px solid var(--soft-line)}.item{grid-template-columns:70px 1fr}.item .th{width:70px;height:70px}.item .pr{grid-column:1/-1;text-align:left;display:flex;justify-content:space-between;align-items:center}.pay,.feat{grid-template-columns:1fr}.hero-facts{flex-direction:column}}
+/* ===== ПРЕМИУМ-ОФОРМЛЕНИЕ: гирлянда, ель, шишки, анимация героев ===== */
+.garland{position:fixed;top:0;left:0;right:0;height:26px;z-index:75;display:flex;justify-content:space-around;pointer-events:none}
+.garland::before{content:"";position:absolute;left:0;right:0;top:0;height:16px;
+  background:radial-gradient(ellipse 23px 12px at 50% 0,transparent 10px,#1a3d2c 11px,#1a3d2c 12.5px,transparent 13.5px) 0 0/46px 16px repeat-x;opacity:.85}
+.garland i{position:relative;top:8px;width:9px;height:14px;border-radius:50% 50% 55% 55%;background:var(--c);
+  box-shadow:0 0 10px 3px var(--c),inset -2px -3px 3px rgba(0,0,0,.25),inset 2px 2px 3px rgba(255,255,255,.55);animation:twinkle 1.8s ease-in-out infinite var(--d)}
+.garland i::before{content:"";position:absolute;left:2px;top:-5px;width:5px;height:6px;background:#caa24a;border-radius:1px}
+@keyframes twinkle{0%,100%{opacity:1;filter:brightness(1.1)}50%{opacity:.45;filter:brightness(.7)}}
+.header{top:20px;border-radius:0 0 14px 14px;margin:0 2vw;box-shadow:0 10px 30px rgba(10,20,50,.18)}
+[data-theme="card"] .header{border-top:0}
+.header.scrolled{top:16px}
+.sec-title::after{height:5px;width:90px;border-radius:3px;background:linear-gradient(90deg,#f6c453,var(--accent),#1f7a58)}
+.btn{background-image:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,0) 55%,rgba(0,0,0,.14));position:relative;overflow:hidden}
+.btn::after{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-18deg);transition:left .6s}
+.btn:hover::after{left:130%}
+.card .thumb,.hero-art,.p-art{background:#12306a}
+.card:hover{box-shadow:0 18px 40px rgba(10,20,50,.28)}
+[data-theme="card"] .card:hover{box-shadow:8px 8px 0 var(--line),0 18px 40px rgba(10,20,50,.2)}
+.hero-art,.p-art{transition:transform .25s ease-out,box-shadow .3s;will-change:transform;box-shadow:var(--shadow),0 30px 60px rgba(10,25,70,.35)}
+.hero{position:relative}
+section{position:relative}
+.fir{position:absolute;pointer-events:none;z-index:6;width:clamp(170px,24vw,340px);filter:drop-shadow(0 8px 10px rgba(0,0,0,.28));animation:sway 7s ease-in-out infinite;transform-origin:top right}
+.fir svg{display:block;width:100%;height:auto}
+.fir.tr{top:84px;right:-12px}
+.fir.bl{bottom:-24px;left:-14px;transform:scaleY(-1);width:clamp(130px,16vw,230px);opacity:.95;animation:none}
+.fir.small{width:clamp(130px,17vw,240px);top:30px}
+.fir.small.tr{right:0}
+.fir.tl{left:0;transform-origin:top left}
+.fir.tr svg{transform:scaleX(-1)}
+@keyframes sway{0%,100%{transform:rotate(-1.2deg)}50%{transform:rotate(1.4deg)}}
+svg .bob{animation:bob 3.6s ease-in-out infinite}
+svg .bob.d2{animation-delay:-1.8s}
+svg .wave,svg .blink,svg .tw,svg .glow{transform-box:fill-box}
+svg .wave{transform-origin:20% 90%;animation:wave 1.7s ease-in-out infinite}
+svg .wave.r{transform-origin:80% 90%;animation-delay:-.8s}
+svg .blink{transform-origin:center;animation:blink 4.2s infinite}
+svg .tw{transform-origin:center;animation:star 2.6s ease-in-out infinite}
+svg .tw.d2{animation-delay:-.9s}svg .tw.d3{animation-delay:-1.7s}
+svg .glow{animation:star 2.2s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3.5px)}}
+@keyframes wave{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(11deg)}}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
+@keyframes star{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+@media(max-width:860px){.fir.tr{top:70px;opacity:.9}.garland i:nth-child(even){display:none}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

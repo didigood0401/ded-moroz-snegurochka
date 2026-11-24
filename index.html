@@ -8,6 +8,31 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <radialGradient id="gRed" cx=".32" cy=".22" r="1"><stop offset="0" stop-color="#ff6b6f"/><stop offset=".5" stop-color="#d62839"/><stop offset="1" stop-color="#6e0c1b"/></radialGradient>
+  <radialGradient id="gBlue" cx=".32" cy=".22" r="1"><stop offset="0" stop-color="#7a98ff"/><stop offset=".5" stop-color="#1e3fae"/><stop offset="1" stop-color="#091650"/></radialGradient>
+  <radialGradient id="gSky" cx=".32" cy=".22" r="1"><stop offset="0" stop-color="#b4e0ff"/><stop offset=".5" stop-color="#4aa3ff"/><stop offset="1" stop-color="#1a4f9a"/></radialGradient>
+  <radialGradient id="gViolet" cx=".32" cy=".22" r="1"><stop offset="0" stop-color="#c6a2ff"/><stop offset=".5" stop-color="#7b3fe4"/><stop offset="1" stop-color="#34167c"/></radialGradient>
+  <radialGradient id="gFur" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#fff"/><stop offset=".6" stop-color="#eef2fa"/><stop offset="1" stop-color="#aab6cf"/></radialGradient>
+  <radialGradient id="gSkin" cx=".4" cy=".32" r=".85"><stop offset="0" stop-color="#ffe9d4"/><stop offset=".6" stop-color="#f6bd9a"/><stop offset="1" stop-color="#d98a68"/></radialGradient>
+  <linearGradient id="gGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3b8"/><stop offset=".45" stop-color="#f6c453"/><stop offset="1" stop-color="#a9741a"/></linearGradient>
+  <linearGradient id="gHair" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe29a"/><stop offset="1" stop-color="#c08a30"/></linearGradient>
+  <linearGradient id="gFir" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3fae7e"/><stop offset=".5" stop-color="#1a6b4b"/><stop offset="1" stop-color="#0a3a29"/></linearGradient>
+  <linearGradient id="gFir2" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#1d7a55"/><stop offset=".6" stop-color="#0f5339"/><stop offset="1" stop-color="#072a1d"/></linearGradient>
+  <linearGradient id="gTree" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3aa077"/><stop offset=".55" stop-color="#17583f"/><stop offset="1" stop-color="#082b1e"/></linearGradient>
+  <radialGradient id="gCone" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#d9a066"/><stop offset=".55" stop-color="#8e5429"/><stop offset="1" stop-color="#3f2210"/></radialGradient>
+  <linearGradient id="gCone2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c58a50"/><stop offset="1" stop-color="#6b3c1b"/></linearGradient>
+  <radialGradient id="gOrn" cx=".3" cy=".28" r=".85"><stop offset="0" stop-color="#ffb3b8"/><stop offset=".45" stop-color="#e02a3a"/><stop offset="1" stop-color="#6e0c1b"/></radialGradient>
+  <radialGradient id="gOrnG" cx=".3" cy=".28" r=".85"><stop offset="0" stop-color="#fff6c8"/><stop offset=".45" stop-color="#f1b93c"/><stop offset="1" stop-color="#8a5a10"/></radialGradient>
+  <linearGradient id="gSkyBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#091a42"/><stop offset=".55" stop-color="#1f4a86"/><stop offset="1" stop-color="#6d9ccc"/></linearGradient>
+  <linearGradient id="gSnow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cfdcf0"/></linearGradient>
+  <linearGradient id="gShade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset=".55" stop-color="#000" stop-opacity=".05"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></linearGradient>
+  <linearGradient id="gBox" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff7d86"/><stop offset="1" stop-color="#b3202a"/></linearGradient>
+  <linearGradient id="gBox2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7fd0ff"/><stop offset="1" stop-color="#2a6fc0"/></linearGradient>
+  <filter id="fGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
+  <filter id="fSoft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.6"/></filter>
+  <clipPath id="cClip"><ellipse cx="0" cy="0" rx="11" ry="21"/></clipPath>
+</defs></svg>
 <canvas id="snow"></canvas>
 
 <header class="header" id="header">
@@ -21,6 +46,7 @@
   <a href="#/cart" class="cart-btn" id="cartBtn">Корзина <span class="cart-count" id="cartCount">0</span></a>
 </header>
 
+<div class="garland" id="garland" aria-hidden="true"></div>
 <div class="curtain" id="curtain"></div>
 <main id="app"></main>
 

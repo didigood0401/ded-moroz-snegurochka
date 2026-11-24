@@ -53,54 +53,117 @@ function busy(pid,date,time){ // демо-занятость слотов
 const fmtDate = iso=>{const [y,m,d]=iso.split('-').map(Number);return d+' '+MG[m-1]+' '+y;};
 
 /* ============ ИЛЛЮСТРАЦИИ (SVG, цвета фона берутся из темы) ============ */
+/* Объёмные (псевдо-3D) иллюстрации: радиальные градиенты = свет сверху-слева,
+   затеняющий слой справа, мягкие тени и блики. Градиенты лежат в <defs> index.html. */
+function cone(x,y,s,r){
+  let sc='';
+  for(let row=0;row<7;row++){const yy=-22+row*6.6;
+    for(let col=-2;col<=2;col++){const xx=col*8+(row%2?4:0);
+      sc+=`<path d="M${xx-5} ${yy} Q${xx} ${yy+10} ${xx+5} ${yy} Q${xx} ${yy+3} ${xx-5} ${yy}Z" fill="url(#gCone2)" stroke="#2f1809" stroke-width=".7"/>`;}}
+  return `<g transform="translate(${x} ${y}) rotate(${r||0}) scale(${s})">
+    <ellipse cx="0" cy="0" rx="11" ry="21" fill="url(#gCone)"/>
+    <g clip-path="url(#cClip)">${sc}<ellipse cx="-4" cy="-8" rx="4" ry="9" fill="#fff" opacity=".16"/><ellipse cx="6" cy="6" rx="10" ry="22" fill="url(#gShade)" opacity=".7"/></g>
+    <path d="M-3 -21 q3 -6 6 0" stroke="#4a2a12" stroke-width="2.2" fill="none"/></g>`;
+}
+function ornament(x,y,r,gold){
+  return `<g><path d="M${x} ${y-r-5} v5" stroke="#d9b24a" stroke-width="1.2"/><rect x="${x-r*.35}" y="${y-r-2.5}" width="${r*.7}" height="3" rx="1" fill="url(#gGold)"/>
+  <circle cx="${x}" cy="${y}" r="${r}" fill="url(#${gold?'gOrnG':'gOrn'})"/><ellipse cx="${x-r*.35}" cy="${y-r*.4}" rx="${r*.28}" ry="${r*.18}" fill="#fff" opacity=".75" transform="rotate(-30 ${x-r*.35} ${y-r*.4})"/></g>`;
+}
+function branch(x,y,rot,s,len){
+  len=len||120; let n='';
+  for(let i=0;i<14;i++){const t=6+i*(len/15), w=30-i*1.55, l=18+(i%2)*3;
+    n+=`<path d="M${t} 0 Q${t+3} ${-w*.62} ${t+l} ${-w} Q${t+6} ${-w*.32} ${t} 0Z" fill="url(#gFir2)"/>
+        <path d="M${t} 0 Q${t+3} ${w*.62} ${t+l} ${w} Q${t+6} ${w*.32} ${t} 0Z" fill="url(#gFir2)"/>`;}
+  for(let i=0;i<14;i++){const t=10+i*(len/15), w=26-i*1.4, l=16;
+    n+=`<path d="M${t} 0 Q${t+2} ${-w*.55} ${t+l} ${-w*.92} Q${t+5} ${-w*.25} ${t} 0Z" fill="url(#gFir)"/>
+        <path d="M${t} 0 Q${t+2} ${w*.55} ${t+l} ${w*.92} Q${t+5} ${w*.25} ${t} 0Z" fill="url(#gFir)"/>`;}
+  return `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})"><path d="M-6 0 H${len+8}" stroke="#4a2c14" stroke-width="3.2" stroke-linecap="round"/>${n}</g>`;
+}
+function tree(x,y,s){
+  const tier=(w,h,yy)=>`<path d="M${-w} ${yy} L0 ${yy-h} L${w} ${yy}Q0 ${yy+7} ${-w} ${yy}Z" fill="url(#gTree)"/><path d="M${-w*.62} ${yy-h*.36} Q${-w*.2} ${yy-h*.3} 0 ${yy-h} Q${w*.16} ${yy-h*.5} ${w*.5} ${yy-h*.42} Q${w*.1} ${yy-h*.3} ${-w*.1} ${yy-h*.2}Z" fill="#fff" opacity=".85"/>`;
+  return `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-4" y="-6" width="8" height="14" fill="#4a2c14"/>${tier(26,34,-4)}${tier(20,30,-26)}${tier(14,26,-46)}
+  <circle cx="-8" cy="-12" r="2.2" fill="#ffd45a" class="tw"/><circle cx="9" cy="-32" r="2" fill="#ff6b6f" class="tw d2"/><circle cx="-4" cy="-50" r="1.8" fill="#8fd3ff" class="tw d3"/></g>`;
+}
+function gift(x,y,w,h,g){
+  return `<g><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2" fill="url(#${g})"/><rect x="${x+w*.44}" y="${y}" width="${w*.12}" height="${h}" fill="url(#gGold)"/><rect x="${x}" y="${y+h*.4}" width="${w}" height="${h*.12}" fill="url(#gGold)"/>
+  <path d="M${x+w/2} ${y} q-9 -9 -11 -2 q4 4 11 2 q7 2 11 -2 q-2 -7 -11 2Z" fill="url(#gGold)"/><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2" fill="url(#gShade)" opacity=".55"/></g>`;
+}
 function santa(x,y,s,vip){
-  const coat=vip?'#1e3fae':'#d62839', trim=vip?'#f6c453':'#fff', dark=vip?'#142a7a':'#a81c2a';
+  const g=vip?'gBlue':'gRed', mid=vip?'#1e3fae':'#d62839', dk=vip?'#0b1d5e':'#7a1020';
   return `<g transform="translate(${x} ${y}) scale(${s})">
-  <path d="M-62 120 Q-70 40 -34 22 L34 22 Q70 40 62 120Z" fill="${coat}"/>
-  <path d="M-8 22 L8 22 L12 120 L-12 120Z" fill="${trim}"/>
-  ${vip?'<g fill="#f6c453"><circle cx="0" cy="55" r="4"/><circle cx="0" cy="80" r="4"/><circle cx="0" cy="105" r="4"/></g>':''}
-  <path d="M-62 108 H62 V120 H-62Z" fill="${trim}"/>
-  <circle cx="0" cy="-8" r="34" fill="#ffd3b0"/>
-  <path d="M-38 -2 Q-44 56 0 68 Q44 56 38 -2 Q26 18 0 18 Q-26 18 -38 -2Z" fill="#fff"/>
-  <path d="M-16 26 Q0 16 16 26 Q0 34 -16 26Z" fill="#f1f1f1"/>
-  <circle cx="-12" cy="-10" r="3.4" fill="#223"/><circle cx="12" cy="-10" r="3.4" fill="#223"/>
-  <circle cx="0" cy="3" r="6.5" fill="#f0a08a"/>
-  <path d="M-16 -19 Q-12 -23 -6 -20 M6 -20 Q12 -23 16 -19" stroke="#ddd" stroke-width="3" fill="none" stroke-linecap="round"/>
-  <path d="M-38 -14 Q-36 -58 0 -62 Q36 -58 38 -14Z" fill="${coat}"/>
-  <rect x="-42" y="-24" width="84" height="16" rx="8" fill="${trim}"/>
-  <circle cx="30" cy="-66" r="10" fill="${trim}"/>
-  <path d="M-60 62 q-16 30 0 40" stroke="${dark}" stroke-width="14" stroke-linecap="round" fill="none"/>
-  ${vip?'<rect x="66" y="-20" width="5" height="140" rx="2" fill="#f6c453"/><circle cx="68" cy="-26" r="12" fill="#bfe4ff" stroke="#f6c453" stroke-width="3"/>':'<rect x="66" y="10" width="5" height="110" rx="2" fill="#c9923a"/>'}
-  </g>`;
+  <ellipse cx="0" cy="124" rx="64" ry="9" fill="#04122e" opacity=".4" filter="url(#fSoft)"/>
+  <g class="bob">
+  <path d="M-62 120 Q-70 40 -34 22 L34 22 Q70 40 62 120Z" fill="url(#${g})"/>
+  <path d="M-62 120 Q-70 40 -34 22 L34 22 Q70 40 62 120Z" fill="url(#gShade)"/>
+  <path d="M-9 22 L9 22 L13 120 L-13 120Z" fill="url(#gFur)"/>
+  ${vip?'<g fill="url(#gGold)"><circle cx="0" cy="50" r="4.5"/><circle cx="0" cy="72" r="4.5"/></g>':''}
+  <rect x="-60" y="84" width="120" height="13" fill="#17171f"/><rect x="-60" y="84" width="120" height="4" fill="#fff" opacity=".12"/>
+  <rect x="-11" y="81" width="22" height="19" rx="3" fill="url(#gGold)" stroke="#8a5a10" stroke-width="1.4"/><rect x="-6" y="86" width="12" height="9" rx="1.5" fill="#17171f"/>
+  <rect x="-64" y="106" width="128" height="16" rx="8" fill="url(#gFur)"/>
+  <path d="M-52 58 Q-76 74 -56 100" stroke="${dk}" stroke-width="15" stroke-linecap="round" fill="none"/><circle cx="-56" cy="101" r="9" fill="url(#gFur)"/>
+  ${vip?'<rect x="-84" y="-28" width="5" height="150" rx="2" fill="url(#gGold)"/><g class="glow"><circle cx="-82" cy="-34" r="14" fill="#bfe9ff" opacity=".5" filter="url(#fGlow)"/><circle cx="-82" cy="-34" r="10" fill="#d8f2ff" stroke="url(#gGold)" stroke-width="3"/></g>':'<rect x="-84" y="8" width="5" height="114" rx="2" fill="#c9923a"/>'}
+  <g class="wave"><path d="M44 36 Q76 24 84 -8" stroke="${mid}" stroke-width="16" stroke-linecap="round" fill="none"/><circle cx="85" cy="-14" r="10" fill="url(#gFur)"/></g>
+  <circle cx="0" cy="-8" r="34" fill="url(#gSkin)"/>
+  <circle cx="-23" cy="4" r="7" fill="#ff7d7d" opacity=".4" filter="url(#fSoft)"/><circle cx="23" cy="4" r="7" fill="#ff7d7d" opacity=".4" filter="url(#fSoft)"/>
+  <path d="M-38 -2 Q-46 58 0 70 Q46 58 38 -2 Q26 18 0 18 Q-26 18 -38 -2Z" fill="url(#gFur)"/>
+  <path d="M-30 20 q6 18 22 22 M30 20 q-6 18 -22 22 M-10 48 q10 8 20 0" stroke="#b9c4da" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M-19 25 Q0 12 19 25 Q0 36 -19 25Z" fill="url(#gFur)"/>
+  <g class="blink"><ellipse cx="-12" cy="-10" rx="3.6" ry="4" fill="#1b2438"/><ellipse cx="12" cy="-10" rx="3.6" ry="4" fill="#1b2438"/><circle cx="-13.2" cy="-11.5" r="1.3" fill="#fff"/><circle cx="10.8" cy="-11.5" r="1.3" fill="#fff"/></g>
+  <circle cx="0" cy="3" r="7" fill="#f09078"/><ellipse cx="-2" cy="0.5" rx="2.4" ry="1.6" fill="#fff" opacity=".55"/>
+  <path d="M-17 -20 Q-12 -25 -5 -21 M5 -21 Q12 -25 17 -20" stroke="#e6ebf5" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+  <path d="M-38 -14 Q-36 -60 0 -64 Q36 -60 38 -14Z" fill="url(#${g})"/><path d="M-38 -14 Q-36 -60 0 -64 Q36 -60 38 -14Z" fill="url(#gShade)"/>
+  <rect x="-43" y="-25" width="86" height="17" rx="8.5" fill="url(#gFur)"/>
+  ${vip?'<path d="M-30 -28 l-3 -3 l6 0z M-8 -34 l-3 -4 l6 0z M12 -32 l-3 -4 l6 0z" fill="url(#gGold)"/>':''}
+  <path d="M30 -58 Q50 -52 46 -30" stroke="${mid}" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="46" cy="-28" r="11" fill="url(#gFur)"/>
+  </g></g>`;
 }
 function maiden(x,y,s,vip){
-  const coat=vip?'#7b3fe4':'#4aa3ff', trim=vip?'#f6c453':'#fff';
+  const g=vip?'gViolet':'gSky', mid=vip?'#7b3fe4':'#4aa3ff';
   return `<g transform="translate(${x} ${y}) scale(${s})">
-  <path d="M-52 120 Q-56 44 -26 24 L26 24 Q56 44 52 120Z" fill="${coat}"/>
-  <path d="M-52 106 H52 V120 H-52Z" fill="${trim}"/>
-  <path d="M-14 24 L0 60 L14 24Z" fill="${trim}" opacity=".85"/>
-  <path d="M-30 -6 Q-44 40 -26 90 Q-20 40 -20 -6Z" fill="#e8b25a"/>
-  <path d="M30 -6 Q44 40 26 90 Q20 40 20 -6Z" fill="#e8b25a"/>
-  <circle cx="-26" cy="92" r="6" fill="#ff7a9a"/><circle cx="26" cy="92" r="6" fill="#ff7a9a"/>
-  <circle cx="0" cy="-8" r="30" fill="#ffd3b0"/>
-  <path d="M-30 -8 Q-30 -34 0 -36 Q30 -34 30 -8 Q18 -22 0 -22 Q-18 -22 -30 -8Z" fill="#e8b25a"/>
-  <circle cx="-11" cy="-5" r="3.2" fill="#223"/><circle cx="11" cy="-5" r="3.2" fill="#223"/>
-  <circle cx="-18" cy="6" r="5" fill="#ff9aa8" opacity=".55"/><circle cx="18" cy="6" r="5" fill="#ff9aa8" opacity=".55"/>
-  <path d="M-8 8 Q0 15 8 8" stroke="#c0394f" stroke-width="3" fill="none" stroke-linecap="round"/>
-  <path d="M-30 -22 L-24 -58 L-10 -46 L0 -66 L10 -46 L24 -58 L30 -22Z" fill="${vip?'#f6c453':'#dff1ff'}" stroke="${vip?'#fff':'#8fd3ff'}" stroke-width="2"/>
-  </g>`;
+  <ellipse cx="0" cy="124" rx="56" ry="8" fill="#04122e" opacity=".4" filter="url(#fSoft)"/>
+  <g class="bob d2">
+  <path d="M-30 -4 Q-48 44 -28 96 Q-18 44 -20 -4Z" fill="url(#gHair)"/><path d="M30 -4 Q48 44 28 96 Q18 44 20 -4Z" fill="url(#gHair)"/>
+  <path d="M-34 20 q8 4 12 -2 M-36 44 q8 4 12 -2 M-32 68 q8 4 12 -2" stroke="#a8742a" stroke-width="1.6" fill="none"/>
+  <circle cx="-28" cy="98" r="7" fill="url(#gOrn)"/><circle cx="28" cy="98" r="7" fill="url(#gOrn)"/>
+  <path d="M-52 120 Q-58 44 -26 24 L26 24 Q58 44 52 120Z" fill="url(#${g})"/><path d="M-52 120 Q-58 44 -26 24 L26 24 Q58 44 52 120Z" fill="url(#gShade)"/>
+  <path d="M-14 24 L0 62 L14 24Z" fill="url(#gFur)" opacity=".9"/>
+  <path d="M-30 80 l0 8 M-34 84 l8 0 M30 62 l0 8 M26 66 l8 0 M-12 100 l0 8 M-16 104 l8 0" stroke="#fff" stroke-width="1.6" opacity=".8"/>
+  <rect x="-56" y="104" width="112" height="16" rx="8" fill="url(#gFur)"/>
+  <g class="wave r"><path d="M-40 38 Q-72 26 -80 -6" stroke="${mid}" stroke-width="14" stroke-linecap="round" fill="none"/><circle cx="-81" cy="-12" r="9" fill="url(#gFur)"/></g>
+  <path d="M40 40 Q58 64 40 86" stroke="${mid}" stroke-width="13" stroke-linecap="round" fill="none"/><circle cx="40" cy="88" r="8.5" fill="url(#gFur)"/>
+  <circle cx="0" cy="-8" r="30" fill="url(#gSkin)"/>
+  <path d="M-31 -6 Q-32 -36 0 -38 Q32 -36 31 -6 Q18 -24 0 -24 Q-18 -24 -31 -6Z" fill="url(#gHair)"/>
+  <g class="blink"><ellipse cx="-11" cy="-5" rx="3.4" ry="4" fill="#1b2438"/><ellipse cx="11" cy="-5" rx="3.4" ry="4" fill="#1b2438"/><circle cx="-12.1" cy="-6.5" r="1.2" fill="#fff"/><circle cx="9.9" cy="-6.5" r="1.2" fill="#fff"/></g>
+  <circle cx="-18" cy="6" r="6" fill="#ff8aa0" opacity=".6" filter="url(#fSoft)"/><circle cx="18" cy="6" r="6" fill="#ff8aa0" opacity=".6" filter="url(#fSoft)"/>
+  <path d="M-8 8 Q0 16 8 8" stroke="#c0394f" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M-31 -20 L-26 -58 L-11 -46 L0 -68 L11 -46 L26 -58 L31 -20Z" fill="url(#${vip?'gGold':'gFur'})" stroke="${vip?'#fff6c8':'#8fd3ff'}" stroke-width="1.6"/>
+  <circle cx="0" cy="-34" r="5" fill="url(#gOrn)"/><circle cx="-16" cy="-30" r="2.6" fill="#fff"/><circle cx="16" cy="-30" r="2.6" fill="#fff"/>
+  </g></g>`;
 }
 function art(p){
-  const dots=Array.from({length:16},(_,i)=>`<circle cx="${(i*47+13)%200}" cy="${(i*29+9)%120}" r="${i%3?1.2:2}" fill="#fff" opacity=".55"/>`).join('');
+  const stars=Array.from({length:22},(_,i)=>`<circle class="tw ${['','d2','d3'][i%3]}" cx="${(i*47+13)%200}" cy="${(i*29+9)%110}" r="${i%4?1:1.7}" fill="#fff"/>`).join('');
   const two=p.who.length===2;
   return `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-    <rect width="200" height="200" style="fill:var(--sky)"/>${dots}
-    <path d="M0 160 Q50 142 100 156 T200 150 V200 H0Z" style="fill:var(--ground1)"/><path d="M0 178 Q60 166 120 176 T200 172 V200 H0Z" style="fill:var(--ground2)"/>
-    <path d="M18 150 l14 -44 l14 44z" fill="#2a7a64"/><path d="M26 126 l6 -22 l6 22z" fill="#3b9a80"/>
-    ${two?santa(70,52,.85,p.vip)+maiden(142,66,.74,p.vip):santa(100,48,1.05,p.vip)}
+    <rect width="200" height="200" fill="url(#gSkyBg)"/>
+    <circle cx="164" cy="34" r="24" fill="#fff4c8" opacity=".5" filter="url(#fGlow)"/><circle cx="164" cy="34" r="12" fill="#fff8de"/>
+    ${stars}
+    <path d="M0 146 Q40 126 90 142 T200 136 V200 H0Z" fill="#b6c9e6"/>
+    ${tree(22,152,.9)}${tree(176,150,.8)}${tree(48,148,.55)}
+    <path d="M0 160 Q50 142 100 156 T200 150 V200 H0Z" fill="url(#gSnow)"/><path d="M0 180 Q60 168 120 178 T200 174 V200 H0Z" fill="#c4d4ec"/>
+    ${two?santa(72,50,.82,p.vip)+maiden(140,64,.72,p.vip):santa(100,46,1.02,p.vip)}
+    ${gift(8,168,22,18,'gBox')}${gift(168,170,20,16,'gBox2')}
+    ${branch(-6,196,-22,.62,110)}${cone(40,184,.7,24)}${branch(206,196,202,.62,110)}${cone(160,186,.62,-20)}${ornament(98,191,5,true)}
   </svg>`;
 }
 
+/* декор: еловые лапы, шишки, шары — углы секций */
+function firDeco(kind){
+  const o=(x,y,r,g)=>ornament(x,y,r,g);
+  const body=`${branch(8,30,22,1.35,170)}${branch(10,70,50,1.05,130)}${branch(0,18,4,.9,120)}
+    ${cone(150,76,1,-18)}${cone(96,112,.85,16)}${o(214,50,9,false)}${o(70,150,8,true)}
+    <circle cx="190" cy="34" r="3" fill="#fff" opacity=".9"/><circle cx="120" cy="52" r="2.2" fill="#fff" opacity=".9"/><circle cx="60" cy="98" r="2" fill="#fff" opacity=".9"/>`;
+  return `<div class="fir ${kind}" aria-hidden="true"><svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg">${body}</svg></div>`;
+}
 /* ============ СОСТОЯНИЕ ============ */
 let cart = JSON.parse(localStorage.getItem('cart')||'[]');
 const saveCart=()=>{localStorage.setItem('cart',JSON.stringify(cart));updateCount();};
@@ -147,6 +210,7 @@ function observeReveal(){
 function viewHome(){
   return `<div class="page">
   <div class="hero">
+    ${firDeco('tr')}${firDeco('bl')}
     <div>
       <span class="eyebrow">Новогодние поздравления · 2027</span>
       <h1>Дед Мороз и Снегурочка у вас дома</h1>
@@ -162,6 +226,7 @@ function viewHome(){
   </div>
 
   <section id="catalog">
+    ${firDeco('tr small')}
     <h2 class="sec-title reveal">Программы</h2>
     <p class="sec-sub reveal">Выберите, кто придёт к вам на праздник</p>
     <div class="grid">${PRODUCTS.map((p,i)=>`
@@ -173,6 +238,7 @@ function viewHome(){
   </section>
 
   <section id="how">
+    ${firDeco('tl small')}
     <h2 class="sec-title reveal">Как заказать</h2><p class="sec-sub reveal">Как в обычном интернет-магазине</p>
     <div class="steps reveal">
       ${[['Выберите программу','Дед Мороз один или со Снегурочкой, стандарт или VIP.'],['Дата, время, длительность','Календарь покажет свободное время. Цена пересчитывается сразу.'],['Корзина и оплата','Можно заказать несколько поздравлений в разные дни.'],['Мы перезвоним','Подтвердим время и адрес, обсудим детали программы.']]
@@ -181,6 +247,7 @@ function viewHome(){
   </section>
 
   <section id="faq">
+    ${firDeco('tr small')}
     <h2 class="sec-title reveal">Вопросы и ответы</h2><p class="sec-sub reveal">Текст в этом блоке — пример, итоговые условия согласуются</p>
     <div class="faq reveal">
       <details><summary>Как формируется цена?</summary><p>Цена зависит от программы, длительности и даты. В самые востребованные дни (30–31 декабря, 1 января) и в вечернее время действует повышающий коэффициент. Итоговая цена видна до оплаты.</p></details>
@@ -311,14 +378,25 @@ function bindCheckout(){
 (function snow(){
   const cv=$('#snow'),ctx=cv.getContext('2d');let W,H;const fl=[];
   const rs=()=>{W=cv.width=innerWidth;H=cv.height=innerHeight;};rs();addEventListener('resize',rs);
-  for(let i=0;i<Math.min(80,Math.floor(innerWidth/16));i++)fl.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2.2+.7,s:Math.random()*.7+.3,p:Math.random()*6});
+  for(let i=0;i<Math.min(110,Math.floor(innerWidth/12));i++)fl.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2.2+.7,s:Math.random()*.7+.3,p:Math.random()*6});
   (function loop(t){
-    if(document.documentElement.dataset.theme==='night'){
-      ctx.clearRect(0,0,W,H);ctx.fillStyle='#fff';
-      fl.forEach(f=>{f.y+=f.s+f.r*.12;f.x+=Math.sin(t/1400+f.p)*.35;if(f.y>H+5){f.y=-5;f.x=Math.random()*W;}
-        ctx.globalAlpha=.35+f.r/5;ctx.beginPath();ctx.arc(f.x,f.y,f.r,0,7);ctx.fill();});
-    }
+    ctx.clearRect(0,0,W,H);ctx.fillStyle=document.documentElement.dataset.theme==='night'?'#fff':'#9db8dc';
+    fl.forEach(f=>{f.y+=f.s+f.r*.12;f.x+=Math.sin(t/1400+f.p)*.35;if(f.y>H+5){f.y=-5;f.x=Math.random()*W;}
+      ctx.globalAlpha=.4+f.r/5;ctx.beginPath();ctx.arc(f.x,f.y,f.r,0,7);ctx.fill();});
     requestAnimationFrame(loop);})(0);
 })();
 
+/* ============ ГИРЛЯНДА И 3D-НАКЛОН КАРТИНОК ============ */
+(function garland(){
+  const g=$('#garland'),cols=['#ff4d5a','#ffd45a','#5ad6ff','#7dff9a','#ff9bd6'];
+  const build=()=>{const n=Math.max(8,Math.floor(innerWidth/46));
+    g.innerHTML=Array.from({length:n},(_,i)=>`<i style="--c:${cols[i%5]};--d:${(i%5)*.35}s"></i>`).join('');};
+  build();addEventListener('resize',build);
+})();
+document.addEventListener('pointermove',e=>{
+  const el=e.target.closest&&e.target.closest('.hero-art,.p-art'); if(!el)return;
+  const r=el.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+  el.style.transform=`perspective(900px) rotateY(${x*9}deg) rotateX(${-y*9}deg)`;
+});
+document.addEventListener('pointerout',e=>{const el=e.target.closest&&e.target.closest('.hero-art,.p-art');if(el)el.style.transform='';});
 updateCount();render(true);
