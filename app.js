@@ -221,21 +221,21 @@ const art=(p,hero)=>HAS_PHOTO?photoArt(p,hero):artSvg(p);
 
 
 /* ============ ФОН-СЦЕНА: герои на фоне страницы, кадр меняется при прокрутке ============ */
-const SCENES={A:{z:1,cx:.5,cy:.5,mx:'50%'},B:{z:1.7,cx:.38,cy:.45,mx:'30%'},F:{z:2.3,cx:.36,cy:.42,mx:'28%'}};
+const SCENES={A:{z:1,cx:.5,cy:.5,mx:'50%'},B:{z:1.7,cx:.38,cy:.45,mx:'30%'},F:{z:2.3,cx:.36,cy:.42,mx:'28%'},M:{u:'images/snowman.jpg',bs:'cover',bp:'50% 38%',mx:'40%'},T:{u:'images/tree2.jpg',bs:'cover',bp:'50% 55%',mx:'50%'}};
 const bp2=(z,c)=>z>1?((c*z-.5)/(z-1)*100).toFixed(1)+'%':'50%';
 const DEVSCENE=new URLSearchParams(location.search).get('scene');
 let sceneBase=DEVSCENE||'A',sceneHover=null,px=0,py=0;
 function buildStage(){
   document.body.classList.add('photo-mode');
   const st=document.createElement('div');st.id='stage';
-  st.innerHTML=Object.entries(SCENES).map(([k,s])=>`<div class="layer" data-s="${k}" style="--bs:${s.z*100}% auto;--bp:${bp2(s.z,s.cx)} ${bp2(s.z,s.cy)};--mx:${s.mx};background-image:url(${PHOTO})"></div>`).join('')+'<div class="glints"></div>';
+  st.innerHTML=Object.entries(SCENES).map(([k,s])=>`<div class="layer" data-s="${k}" style="--bs:${s.bs||(s.z*100+'% auto')};--bp:${s.bp||(bp2(s.z,s.cx)+' '+bp2(s.z,s.cy))};--mx:${s.mx};background-image:url(${s.u||PHOTO})"></div>`).join('')+'<div class="glints"></div>';
   document.body.prepend(st);
   const sky=document.createElement('div');sky.id='sky';sky.setAttribute('aria-hidden','true');sky.innerHTML=window.SKY?window.SKY.svg:'';document.body.prepend(sky);
-  const sky2=document.createElement('div');sky2.id='sky2';sky2.className='skyl';sky2.setAttribute('aria-hidden','true');sky2.innerHTML=(window.SKY?window.SKY.svgR:'')+[['R','images/reindeer.jpg'],['T','images/tree.jpg']].map(p=>`<div class="pbg" data-s="${p[0]}" style="background-image:url(${p[1]})"></div>`).join('')+'<div class="pvig"></div>';const bk=document.createElement('div');bk.id='bokeh';bk.setAttribute('aria-hidden','true');bk.innerHTML=Array.from({length:16},(_,i)=>`<i style="left:${(Math.random()*100).toFixed(1)}%;top:${(Math.random()*100).toFixed(1)}%;width:${(40+Math.random()*110).toFixed(0)}px;height:${(40+Math.random()*110).toFixed(0)}px;animation-delay:-${(Math.random()*20).toFixed(1)}s;animation-duration:${(16+Math.random()*16).toFixed(1)}s"></i>`).join('');document.body.prepend(bk);document.body.prepend(sky2);
+  const sky2=document.createElement('div');sky2.id='sky2';sky2.className='skyl';sky2.setAttribute('aria-hidden','true');sky2.innerHTML='';const bk=document.createElement('div');bk.id='bokeh';bk.setAttribute('aria-hidden','true');bk.innerHTML=Array.from({length:16},(_,i)=>`<i style="left:${(Math.random()*100).toFixed(1)}%;top:${(Math.random()*100).toFixed(1)}%;width:${(40+Math.random()*110).toFixed(0)}px;height:${(40+Math.random()*110).toFixed(0)}px;animation-delay:-${(Math.random()*20).toFixed(1)}s;animation-duration:${(16+Math.random()*16).toFixed(1)}s"></i>`).join('');document.body.prepend(bk);document.body.prepend(sky2);
   const sp=new URLSearchParams(location.search).get('scene'); if(sp)sceneBase=sp;
   setScene(); skyLoop();
 }
-function setScene(){const k=sceneHover||sceneBase;$$('#stage .layer').forEach(l=>l.classList.toggle('on',l.dataset.s===k));document.body.classList.toggle('sky-on',k==='S');const ph=(k==='R'||k==='T');document.body.classList.toggle('sky2-on',ph);document.body.dataset.ps=ph?k:'';}
+function setScene(){const k=sceneHover||sceneBase;$$('#stage .layer').forEach(l=>l.classList.toggle('on',l.dataset.s===k));document.body.classList.toggle('sky-on',k==='S');}
 function skyLoop(){
   const t0=performance.now();
   (function f(){requestAnimationFrame(f); if(window.SKY&&document.body.classList.contains('sky2-on'))window.SKY.updateR(px,py,0); if(!document.body.classList.contains('sky-on')||!window.SKY)return;
@@ -251,7 +251,7 @@ function sceneForRoute(page,arg){
 function onSceneScroll(){
   if(!HAS_PHOTO)return; par(); if(DEVSCENE||route()!=='/')return;
   const m=innerHeight*.5; let k='A';
-  [['how','S'],['faq','R'],['finale','T']].forEach(([id,s])=>{const e=document.getElementById(id);if(e&&e.getBoundingClientRect().top<m)k=s;});
+  [['how','S'],['faq','M'],['finale','T']].forEach(([id,s])=>{const e=document.getElementById(id);if(e&&e.getBoundingClientRect().top<m)k=s;});
   if(k!==sceneBase){sceneBase=k;if(!sceneHover)setScene();}
 }
 function par(){const st=$('#stage');if(st)st.style.transform=`translate3d(${(-px*22).toFixed(1)}px,${(-py*14-Math.min(scrollY*.04,40)).toFixed(1)}px,0)`;}
@@ -276,7 +276,7 @@ const gallery=()=>SHOW_GALLERY?`<section id="gallery"><h2 class="sec-title revea
 function viewHome(){
   return `<div class="page">
   <div class="hero">
-    ${firDeco('tr')}${firDeco('bl')}
+    ${firDeco('tr')}
     <div>
       <span class="eyebrow">Новогодние поздравления · 2027</span>
       <h1>Дед Мороз и Снегурочка у вас дома</h1>

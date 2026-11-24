@@ -56,7 +56,7 @@ const firs=[[20,800,.9],[210,820,.7],[420,810,.8],[640,830,.65],[800,815,.75],[1
 const svg=`<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
 <defs>
  <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#040a22"/><stop offset=".55" stop-color="#0e2757"/><stop offset=".9" stop-color="#2d5190"/><stop offset="1" stop-color="#6a7fb0"/></linearGradient>
- <radialGradient id="moonLimb"><stop offset=".72" stop-color="#0a1230" stop-opacity="0"/><stop offset="1" stop-color="#0a1230" stop-opacity=".6"/></radialGradient><radialGradient id="moonG" cx=".38" cy=".35" r=".8"><stop offset="0" stop-color="#fffdf0"/><stop offset=".7" stop-color="#f6efc8"/><stop offset="1" stop-color="#d9cfa0"/></radialGradient>
+ <radialGradient id="maria"><stop offset="0" stop-color="#b9ad78" stop-opacity=".55"/><stop offset=".6" stop-color="#bfb482" stop-opacity=".3"/><stop offset="1" stop-color="#c8bd8a" stop-opacity="0"/></radialGradient><radialGradient id="moonLimb"><stop offset=".72" stop-color="#0a1230" stop-opacity="0"/><stop offset="1" stop-color="#0a1230" stop-opacity=".6"/></radialGradient><radialGradient id="moonG" cx=".38" cy=".35" r=".8"><stop offset="0" stop-color="#fffdf0"/><stop offset=".7" stop-color="#f6efc8"/><stop offset="1" stop-color="#d9cfa0"/></radialGradient>
  <linearGradient id="auG" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#3dffb0" stop-opacity="0"/><stop offset=".5" stop-color="#3de0c0" stop-opacity=".5"/><stop offset="1" stop-color="#8a6bff" stop-opacity="0"/></linearGradient>
  <linearGradient id="rdBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#27324f"/><stop offset="1" stop-color="#090e1e"/></linearGradient>
  <linearGradient id="slRed" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c0303c"/><stop offset=".6" stop-color="#7a1220"/><stop offset="1" stop-color="#2a060c"/></linearGradient>
@@ -69,7 +69,12 @@ const svg=`<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmln
 <g><ellipse class="aur" cx="500" cy="230" rx="620" ry="150" fill="url(#auR)" transform="rotate(-8 500 230)"/><ellipse class="aur a2" cx="1100" cy="150" rx="560" ry="120" fill="url(#auR)" opacity=".8" transform="rotate(6 1100 150)"/></g>
 ${stars}
 <circle cx="1180" cy="230" r="260" fill="url(#moonGlow)"/>
-<clipPath id="mclip"><circle cx="1180" cy="230" r="118"/></clipPath><image href="images/moon.jpg" x="1050" y="100" width="260" height="260" clip-path="url(#mclip)" preserveAspectRatio="xMidYMid slice"/><circle cx="1180" cy="230" r="118" fill="url(#moonLimb)"/><circle cx="1180" cy="230" r="124" fill="none" stroke="#fff6cc" stroke-opacity=".18" stroke-width="6"/>
+<circle cx="1180" cy="230" r="112" fill="url(#moonG)"/>
+<ellipse cx="1146" cy="204" rx="36" ry="27" fill="url(#maria)" transform="rotate(-22 1146 204)"/><ellipse cx="1218" cy="256" rx="42" ry="31" fill="url(#maria)" transform="rotate(24 1218 256)"/>
+<ellipse cx="1186" cy="166" rx="28" ry="14" fill="url(#maria)"/><ellipse cx="1128" cy="268" rx="24" ry="19" fill="url(#maria)"/><ellipse cx="1226" cy="196" rx="20" ry="26" fill="url(#maria)" opacity=".7"/>
+<g fill="#e2d8ab" stroke="#c8bd8a" stroke-width="1.2" opacity=".75"><circle cx="1160" cy="238" r="9"/><circle cx="1206" cy="204" r="6.5"/><circle cx="1196" cy="286" r="11"/><circle cx="1136" cy="190" r="5"/><circle cx="1236" cy="236" r="7"/><circle cx="1170" cy="300" r="5"/></g>
+<circle cx="1180" cy="230" r="112" fill="url(#moonLimb)"/>
+<circle cx="1180" cy="230" r="122" fill="none" stroke="#fff6cc" stroke-opacity=".22" stroke-width="7"/>
 
 <path d="M0 700 Q200 640 420 690 T820 670 T1240 690 T1600 650 V900 H0Z" fill="#1a2f63"/>
 <path d="M0 750 Q260 700 520 740 T1020 725 T1600 735 V900 H0Z" fill="#12234d"/>

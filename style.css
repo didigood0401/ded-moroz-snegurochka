@@ -415,3 +415,7 @@ body[data-ps=""] #sky2 svg{opacity:.001}
 #sky2 .pbg[data-s="R"]{filter:saturate(1.12) contrast(1.05) brightness(1.12)}
 #sky2 .pbg[data-s="T"]{filter:saturate(1.2) contrast(1.06) brightness(1.75)}
 #sky2 .pvig{background:radial-gradient(ellipse at 66% 55%,transparent 45%,rgba(4,10,28,.32) 100%),linear-gradient(90deg,rgba(5,12,32,.8),rgba(5,12,32,.42) 38%,rgba(5,12,32,0) 66%),linear-gradient(180deg,rgba(5,12,32,.4),transparent 16%,transparent 80%,rgba(5,12,32,.55))}
+
+#stage .layer[data-s="M"]{filter:saturate(1.05) brightness(.95)}
+#stage .layer[data-s="T"]{filter:saturate(1.08) contrast(1.04)}
+
