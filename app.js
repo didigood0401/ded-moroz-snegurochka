@@ -171,12 +171,12 @@ function updateCount(){$('#cartCount').textContent=cart.length;}
 function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),2400);}
 
 /* ============ ТЕМЫ ============ */
-function setTheme(t){
-  document.documentElement.dataset.theme=t;localStorage.setItem('theme',t);
+function setTheme(t,save){
+  document.documentElement.dataset.theme=t;if(save)localStorage.setItem('theme2',t);
   $$('[data-theme-set]').forEach(b=>b.classList.toggle('on',b.dataset.themeSet===t));
 }
-$$('[data-theme-set]').forEach(b=>b.onclick=()=>setTheme(b.dataset.themeSet));
-setTheme(localStorage.getItem('theme')||'card');
+$$('[data-theme-set]').forEach(b=>b.onclick=()=>setTheme(b.dataset.themeSet,true));
+setTheme(localStorage.getItem('theme2')||'card');
 
 /* ============ РОУТЕР С ПЕРЕХОДАМИ ============ */
 const app=$('#app'),curtain=$('#curtain');
@@ -194,7 +194,7 @@ async function render(first){
   else if(page==='checkout')app.innerHTML=viewCheckout();
   else if(page==='done')app.innerHTML=viewDone(arg);
   else app.innerHTML=viewHome();
-  bind(page,arg);observeReveal();mount3D(page,arg);
+  bind(page,arg);observeReveal();mount3D(page,arg);sceneForRoute(page,arg);
   if(!first){curtain.className='curtain out';setTimeout(()=>{curtain.className='curtain';},520);}
   busyNav=false;
   if(route()!==r)render();
@@ -219,6 +219,33 @@ function photoArt(p,hero){
 }
 const art=(p,hero)=>HAS_PHOTO?photoArt(p,hero):artSvg(p);
 
+
+/* ============ ФОН-СЦЕНА: герои на фоне страницы, кадр меняется при прокрутке ============ */
+const SCENES={A:{z:1,cx:.5,cy:.5,mx:'50%'},B:{z:1.7,cx:.38,cy:.45,mx:'30%'},C:{z:1.9,cx:.64,cy:.42,mx:'75%'},D:{z:1.8,cx:.8,cy:.35,mx:'90%'},F:{z:2.3,cx:.36,cy:.42,mx:'28%'}};
+const bp2=(z,c)=>z>1?((c*z-.5)/(z-1)*100).toFixed(1)+'%':'50%';
+let sceneBase='A',sceneHover=null,px=0,py=0;
+function buildStage(){
+  document.body.classList.add('photo-mode');
+  const st=document.createElement('div');st.id='stage';
+  st.innerHTML=Object.entries(SCENES).map(([k,s])=>`<div class="layer" data-s="${k}" style="--bs:${s.z*100}% auto;--bp:${bp2(s.z,s.cx)} ${bp2(s.z,s.cy)};--mx:${s.mx};background-image:url(${PHOTO})"></div>`).join('')+'<div class="glints"></div>';
+  document.body.prepend(st); setScene();
+}
+function setScene(){const k=sceneHover||sceneBase;$$('#stage .layer').forEach(l=>l.classList.toggle('on',l.dataset.s===k));}
+function sceneForRoute(page,arg){
+  if(!HAS_PHOTO)return; sceneHover=null;
+  if(page==='product'){const p=PRODUCTS.find(x=>x.id===+arg);sceneBase=p&&p.who.length===1?(p.vip?'F':'B'):'A';}
+  else sceneBase='A';
+  setScene(); if(!page)onSceneScroll();
+}
+function onSceneScroll(){
+  if(!HAS_PHOTO)return; par(); if(route()!=='/')return;
+  const m=innerHeight*.5; let k='A';
+  [['catalog','B'],['how','C'],['faq','D']].forEach(([id,s])=>{const e=document.getElementById(id);if(e&&e.getBoundingClientRect().top<m)k=s;});
+  if(k!==sceneBase){sceneBase=k;if(!sceneHover)setScene();}
+}
+function par(){const st=$('#stage');if(st)st.style.transform=`translate3d(${(-px*22).toFixed(1)}px,${(-py*14-Math.min(scrollY*.04,40)).toFixed(1)}px,0)`;}
+addEventListener('scroll',onSceneScroll,{passive:true});
+addEventListener('pointermove',e=>{px=e.clientX/innerWidth-.5;py=e.clientY/innerHeight-.5;par();},{passive:true});
 /* ============ 3D-ГЕРОИ (three.js, запасной вариант — SVG) ============ */
 let m3d=[];
 function kill3d(){m3d.forEach(m=>m.dispose());m3d=[];}
@@ -232,7 +259,8 @@ async function mount3D(page,arg){
 
 /* ============ СТРАНИЦЫ ============ */
 const SHOTS=[['Снегурочка',2.6,.66,.4],['Сказочный дом',2.6,.84,.3],['Мешок с подарками',2.6,.2,.82],['Ёлки в огнях',2.4,.12,.3]];
-const gallery=()=>HAS_PHOTO?`<section id="gallery"><h2 class="sec-title reveal">Атмосфера праздника</h2><p class="sec-sub reveal">Так выглядит сказка, которую мы приносим в ваш дом</p>
+const SHOW_GALLERY=false;
+const gallery=()=>SHOW_GALLERY?`<section id="gallery"><h2 class="sec-title reveal">Атмосфера праздника</h2><p class="sec-sub reveal">Так выглядит сказка, которую мы приносим в ваш дом</p>
   <div class="gallery">${SHOTS.map((s,i)=>`<figure class="shot reveal" data-d="${i*90}"><div class="ph" style="background-image:url(${PHOTO});background-size:${s[1]*100}% auto;background-position:${bp(s[1],s[2],s[3])}"></div><figcaption>${s[0]}</figcaption></figure>`).join('')}</div></section>`:'';
 function viewHome(){
   return `<div class="page">
@@ -249,7 +277,7 @@ function viewHome(){
         <div><b>Онлайн-оплата</b><span>или артисту на месте</span></div>
       </div>
     </div>
-    <div class="hero-art ${HAS_PHOTO?'photo':''}">${art(PRODUCTS[3],true)}</div>
+    ${HAS_PHOTO?'':`<div class="hero-art">${art(PRODUCTS[3],true)}</div>`}
   </div>
 
   <section id="catalog">
@@ -291,7 +319,7 @@ function viewProduct(id){
   const p=PRODUCTS.find(x=>x.id===id); if(!p)return `<div class="narrow page"><h1>Не найдено</h1><a class="btn" href="#/">На главную</a></div>`;
   Object.assign(sel,{date:null,time:null,dur:30,month:0});
   return `<div class="page product">
-    <div><a class="back" href="#/">← Все программы</a><div class="p-art">${art(p)}</div></div>
+    <div><a class="back" href="#/">← Все программы</a>${HAS_PHOTO?'':`<div class="p-art">${art(p)}</div>`}</div>
     <div class="p-info">
       <span class="tag ${p.vip?'vip':''}">${p.vip?'VIP':'Стандарт'}</span>
       <h1>${p.name}</h1><p class="desc">${p.desc}</p>
@@ -346,6 +374,8 @@ function bind(page,arg){
   updateCount();
   $$('[data-scroll]').forEach(a=>a.onclick=e=>{e.preventDefault();const go=()=>{const el=document.getElementById(a.dataset.scroll);el&&el.scrollIntoView({behavior:'smooth'});};
     if(route()!=='/'){location.hash='#/';setTimeout(go,1100);}else go();});
+  if(HAS_PHOTO&&!page)$$('.card').forEach(c=>{const p=PRODUCTS.find(x=>x.id===+c.getAttribute('href').split('/').pop());if(!p)return;
+    c.onmouseenter=()=>{sceneHover=p.who.length===1?(p.vip?'F':'B'):'A';setScene();};c.onmouseleave=()=>{sceneHover=null;setScene();};});
   if(page==='product')bindProduct(+arg);
   if(page==='cart')bindCart();
   if(page==='checkout')bindCheckout();
@@ -429,4 +459,4 @@ document.addEventListener('pointermove',e=>{
 document.addEventListener('pointerout',e=>{const el=e.target.closest&&e.target.closest('.hero-art,.p-art,.shot');if(el)el.style.transform='';});
 updateCount();
 const _ph=new Image(); const _go=()=>render(true);
-_ph.onload=()=>{HAS_PHOTO=true;_go();}; _ph.onerror=_go; _ph.src=PHOTO;
+_ph.onload=()=>{HAS_PHOTO=true;buildStage();if(!localStorage.getItem('theme2'))setTheme('night');_go();}; _ph.onerror=_go; _ph.src=PHOTO;
