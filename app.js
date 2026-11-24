@@ -254,7 +254,7 @@ function onSceneScroll(){
   [['how','S'],['faq','M'],['finale','T']].forEach(([id,s])=>{const e=document.getElementById(id);if(e&&e.getBoundingClientRect().top<m)k=s;});
   if(k!==sceneBase){sceneBase=k;if(!sceneHover)setScene();}
 }
-function par(){const st=$('#stage');if(st)st.style.transform=`translate3d(${(-px*22).toFixed(1)}px,${(-py*14-Math.min(scrollY*.04,40)).toFixed(1)}px,0)`;}
+function par(){const st=$('#stage');if(st)st.style.transform=`translate3d(${(-px*22).toFixed(1)}px,${(-py*14).toFixed(1)}px,0)`;}
 addEventListener('scroll',onSceneScroll,{passive:true});
 addEventListener('pointermove',e=>{px=e.clientX/innerWidth-.5;py=e.clientY/innerHeight-.5;par();},{passive:true});
 /* ============ 3D-ГЕРОИ (three.js, запасной вариант — SVG) ============ */

@@ -447,3 +447,7 @@ body[data-ps=""] #sky2 svg{opacity:.001}
 .curtain{display:none!important}
 .page{animation:pagefade .35s ease both}
 @keyframes pagefade{from{opacity:0}}
+
+/* никаких увеличений и приближений картинок */
+#stage .layer,#sky2 .pbg,.hero-art.photo .ph,.ph{animation:none!important}
+.card:hover .ph,.shot:hover .ph,.card:hover .thumb svg{transform:none!important}
