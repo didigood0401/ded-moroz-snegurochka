@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="card">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Дед Мороз и Снегурочка — заказать поздравление (демо)</title>
+<meta name="description" content="Закажите Деда Мороза или Снегурочку на дом: выберите программу, дату, время и длительность. Цена считается сразу.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="snow"></canvas>
+
+<header class="header" id="header">
+  <a href="#/" class="logo">Дед Мороз <span>и</span> Снегурочка</a>
+  <nav class="nav">
+    <a href="#/" data-scroll="catalog">Программы</a>
+    <a href="#/" data-scroll="how">Как заказать</a>
+    <a href="#/" data-scroll="faq">Вопросы</a>
+  </nav>
+  <a href="tel:+70000000000" class="phone">+7 (000) 000-00-00</a>
+  <a href="#/cart" class="cart-btn" id="cartBtn">Корзина <span class="cart-count" id="cartCount">0</span></a>
+</header>
+
+<div class="curtain" id="curtain"></div>
+<main id="app"></main>
+
+<footer class="footer">
+  <div>Демонстрационная версия. Оплата не списывает средства, телефон и тексты — заглушки.</div>
+</footer>
+
+<div class="theme-switch" role="group" aria-label="Оформление">
+  <span>Оформление</span>
+  <button data-theme-set="card">Открытка</button>
+  <button data-theme-set="night">Ночь</button>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>
