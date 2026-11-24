@@ -271,3 +271,13 @@ svg .glow{animation:star 2.2s ease-in-out infinite}
 .hero-art.is3d{position:relative}
 .three-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;animation:pagein .8s ease both}
 
+
+/* ===== фото-вариант ===== */
+.ph{position:relative;width:100%;height:100%;background-repeat:no-repeat;background-size:cover;background-position:50% 50%;transition:transform .6s ease}
+.card:hover .ph{transform:scale(1.05)}
+.ph::after{content:"";position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;opacity:.8;animation:glint 3.2s ease-in-out infinite;
+  background:radial-gradient(circle at 18% 30%,rgba(255,220,130,.55) 0,transparent 3%),radial-gradient(circle at 82% 22%,rgba(255,230,150,.5) 0,transparent 3%),radial-gradient(circle at 70% 55%,rgba(255,210,120,.45) 0,transparent 3%),radial-gradient(circle at 12% 70%,rgba(255,220,140,.5) 0,transparent 3%),radial-gradient(circle at 50% 12%,rgba(255,240,190,.4) 0,transparent 3%)}
+@keyframes glint{0%,100%{opacity:.25}50%{opacity:.9}}
+.hero-art.photo{aspect-ratio:4/5;max-height:78vh;max-width:620px;border:3px solid #d9b24a;box-shadow:0 0 0 6px var(--bg),0 0 0 8px #d9b24a,0 30px 60px rgba(10,25,70,.4)}
+.hero-art.photo .ph{animation:kb 18s ease-in-out infinite alternate}
+@keyframes kb{from{transform:scale(1)}to{transform:scale(1.07) translate(-1%,-1%)}}

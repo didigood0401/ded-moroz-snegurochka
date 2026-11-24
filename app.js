@@ -140,7 +140,7 @@ function maiden(x,y,s,vip){
   <circle cx="0" cy="-34" r="5" fill="url(#gOrn)"/><circle cx="-16" cy="-30" r="2.6" fill="#fff"/><circle cx="16" cy="-30" r="2.6" fill="#fff"/>
   </g></g>`;
 }
-function art(p){
+function artSvg(p){
   const stars=Array.from({length:22},(_,i)=>`<circle class="tw ${['','d2','d3'][i%3]}" cx="${(i*47+13)%200}" cy="${(i*29+9)%110}" r="${i%4?1:1.7}" fill="#fff"/>`).join('');
   const two=p.who.length===2;
   return `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
@@ -206,10 +206,24 @@ function observeReveal(){
   $$('.reveal').forEach(el=>{el.style.transitionDelay=(el.dataset.d||0)+'ms';io.observe(el);});
 }
 
+/* ============ ФОТО-ВАРИАНТ: images/hero.jpg (если файл есть) ============ */
+let HAS_PHOTO=false;
+const PHOTO='images/hero.jpg', PR=1200/896;
+const bp=(z,cx,cy)=>{const x=z>1?(cx*z-.5)/(z-1):50/100, y=(cy*PR*z-.5)/(PR*z-1); return (x*100).toFixed(1)+'% '+(y*100).toFixed(1)+'%';};
+/* кадрирование: Дед Мороз слева, Снегурочка справа; VIP — ближе */
+function photoArt(p,hero){
+  let z,cx,cy;
+  if(hero){return '<div class="ph hero-ph" style="background-image:url('+PHOTO+')"></div>';}
+  if(p.who.length===1){z=p.vip?2.5:2.2;cx=p.vip?.35:.35;cy=p.vip?.42:.44;} else {z=p.vip?1.12:1.3;cx=.5;cy=p.vip?.5:.56;}
+  return '<div class="ph" style="background-image:url('+PHOTO+');background-size:'+(z*100)+'% auto;background-position:'+bp(z,cx,cy)+'"></div>';
+}
+const art=(p,hero)=>HAS_PHOTO?photoArt(p,hero):artSvg(p);
+
 /* ============ 3D-ГЕРОИ (three.js, запасной вариант — SVG) ============ */
 let m3d=[];
 function kill3d(){m3d.forEach(m=>m.dispose());m3d=[];}
 async function mount3D(page,arg){
+  if(HAS_PHOTO)return;
   const el=page==='product'?$('.p-art'):(!page?$('.hero-art'):null); if(!el)return;
   const p=page==='product'?PRODUCTS.find(x=>x.id===+arg):PRODUCTS[3]; if(!p)return;
   try{const mod=await import('./hero3d.js'); if(!el.isConnected)return; m3d.push(mod.mount(el,{who:p.who,vip:p.vip})); el.dataset.three='1'; el.classList.add('is3d');}
@@ -232,7 +246,7 @@ function viewHome(){
         <div><b>Онлайн-оплата</b><span>или артисту на месте</span></div>
       </div>
     </div>
-    <div class="hero-art">${art(PRODUCTS[3])}</div>
+    <div class="hero-art ${HAS_PHOTO?'photo':''}">${art(PRODUCTS[3],true)}</div>
   </div>
 
   <section id="catalog">
@@ -409,4 +423,6 @@ document.addEventListener('pointermove',e=>{
   el.style.transform=`perspective(900px) rotateY(${x*9}deg) rotateX(${-y*9}deg)`;
 });
 document.addEventListener('pointerout',e=>{const el=e.target.closest&&e.target.closest('.hero-art,.p-art');if(el)el.style.transform='';});
-updateCount();render(true);
+updateCount();
+const _ph=new Image(); const _go=()=>render(true);
+_ph.onload=()=>{HAS_PHOTO=true;_go();}; _ph.onerror=_go; _ph.src=PHOTO;
