@@ -424,3 +424,17 @@ body[data-ps=""] #sky2 svg{opacity:.001}
 .fir.small{top:-64px;width:clamp(110px,13vw,190px)}
 .fir.small.tr{right:1vw}
 .fir.tl{left:-6px}
+
+/* ===== бесшовные края и плавные переходы кадров ===== */
+@media(min-width:1101px){
+  #stage{top:-14vh;right:-6vw;height:128vh;width:calc(128vh*.7467);
+    -webkit-mask-image:radial-gradient(closest-side at 50% 50%,#000 54%,rgba(0,0,0,.78) 66%,rgba(0,0,0,.4) 82%,rgba(0,0,0,.12) 93%,transparent 100%);
+    mask-image:radial-gradient(closest-side at 50% 50%,#000 54%,rgba(0,0,0,.78) 66%,rgba(0,0,0,.4) 82%,rgba(0,0,0,.12) 93%,transparent 100%)}
+}
+#stage .layer{--f:saturate(1.1) contrast(1.05);filter:blur(10px) var(--f);transition:opacity 2.2s cubic-bezier(.4,0,.2,1),filter 2.2s cubic-bezier(.4,0,.2,1)}
+#stage .layer.on{filter:blur(0) var(--f)}
+#stage .layer[data-s="M"]{--f:saturate(1.05) brightness(.95)}
+#stage .layer[data-s="T"]{--f:saturate(1.08) contrast(1.04)}
+#sky,#sky2{transition:opacity 2.2s cubic-bezier(.4,0,.2,1)}
+#stage{transition:transform .6s ease-out,opacity 2s cubic-bezier(.4,0,.2,1)}
+.photo-mode .item .th{border:0;border-radius:0;background:none;-webkit-mask-image:radial-gradient(closest-side,#000 60%,transparent 100%);mask-image:radial-gradient(closest-side,#000 60%,transparent 100%)}
