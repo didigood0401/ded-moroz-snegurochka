@@ -5,17 +5,17 @@ const rnd=i=>{const x=Math.sin(i*127.1+3.7)*43758.5453;return x-Math.floor(x);};
 const stars=Array.from({length:110},(_,i)=>`<circle class="tw ${['','d2','d3'][i%3]}" cx="${(rnd(i)*1600).toFixed(0)}" cy="${(rnd(i+200)*520).toFixed(0)}" r="${(.7+rnd(i+400)*1.6).toFixed(1)}" fill="#fff" opacity="${(.5+rnd(i+600)*.5).toFixed(2)}"/>`).join('');
 
 function reindeer(x,y,s,rudolph,d){
-  const leg=(p,cls,dl)=>`<g class="leg ${cls}" style="animation-delay:${dl}s"><path d="${p}" stroke="#2a190e" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>`;
+  const leg=(p,cls,dl)=>`<g class="leg ${cls}" style="animation-delay:${dl}s"><path d="${p}" stroke="#0c1226" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>`;
   return `<g transform="translate(${x} ${y}) scale(${s})"><g class="gal" style="animation-delay:${d}s">
   ${leg('M24 10 C38 24 52 30 64 42','',0)}${leg('M-26 10 C-40 24 -52 38 -64 44','b',0)}
   <path d="M-46 0 C-46 -22 -10 -30 20 -25 C42 -22 50 -12 47 0 C45 14 20 21 -5 21 C-30 21 -46 14 -46 0Z" fill="url(#rdBody)"/>
-  <path d="M-40 -14 C-18 -30 22 -28 46 -14" stroke="#f0c987" stroke-width="1.8" fill="none" opacity=".55"/>
+  <path d="M-40 -14 C-18 -30 22 -28 46 -14" stroke="#b4ccff" stroke-width="1.8" fill="none" opacity=".5"/>
   <path d="M-46 -6 C-56 -10 -60 -2 -56 6 C-52 2 -48 2 -46 4Z" fill="#e9dcc8"/>
   <path d="M26 -22 C40 -34 52 -50 60 -66 L76 -58 C70 -44 62 -28 52 -8Z" fill="url(#rdBody)"/>
   <path d="M60 -68 C66 -77 80 -75 90 -65 C97 -58 99 -54 95 -51 C88 -47 78 -52 72 -52 C64 -54 58 -60 60 -68Z" fill="url(#rdBody)"/>
   <path d="M62 -70 C58 -80 52 -80 50 -74 C54 -72 58 -70 62 -66Z" fill="#3a2414"/>
   <circle cx="76" cy="-62" r="1.8" fill="#f6e6b8"/>
-  <path d="M70 -68 C66 -86 74 -100 66 -118 M68 -86 C58 -92 54 -102 48 -106 M72 -98 C82 -102 86 -112 84 -122 M66 -110 C60 -114 58 -122 52 -126" stroke="#3a2616" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+  <path d="M70 -68 C66 -86 74 -100 66 -118 M68 -86 C58 -92 54 -102 48 -106 M72 -98 C82 -102 86 -112 84 -122 M66 -110 C60 -114 58 -122 52 -126" stroke="#0e1428" stroke-width="3.2" fill="none" stroke-linecap="round"/>
   <path d="M34 -16 Q42 2 38 18" stroke="#c0242f" stroke-width="3.5" fill="none"/><circle cx="40" cy="16" r="3.6" fill="url(#gdG)"/>
   <circle cx="95" cy="-54" r="${rudolph?5.5:4}" fill="${rudolph?'#ff2d2d':'#1a0f08'}"/>${rudolph?'<circle cx="95" cy="-54" r="16" fill="url(#redGlow)"/>':''}
   ${leg('M30 12 C40 28 36 40 44 54','b',.12)}${leg('M-20 12 C-14 28 -22 42 -16 54','',.12)}
@@ -56,10 +56,10 @@ const firs=[[20,800,.9],[210,820,.7],[420,810,.8],[640,830,.65],[800,815,.75],[1
 const svg=`<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
 <defs>
  <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#040a22"/><stop offset=".55" stop-color="#0e2757"/><stop offset=".9" stop-color="#2d5190"/><stop offset="1" stop-color="#6a7fb0"/></linearGradient>
- <radialGradient id="moonG" cx=".38" cy=".35" r=".8"><stop offset="0" stop-color="#fffdf0"/><stop offset=".7" stop-color="#f6efc8"/><stop offset="1" stop-color="#d9cfa0"/></radialGradient>
+ <radialGradient id="moonLimb"><stop offset=".72" stop-color="#0a1230" stop-opacity="0"/><stop offset="1" stop-color="#0a1230" stop-opacity=".6"/></radialGradient><radialGradient id="moonG" cx=".38" cy=".35" r=".8"><stop offset="0" stop-color="#fffdf0"/><stop offset=".7" stop-color="#f6efc8"/><stop offset="1" stop-color="#d9cfa0"/></radialGradient>
  <linearGradient id="auG" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#3dffb0" stop-opacity="0"/><stop offset=".5" stop-color="#3de0c0" stop-opacity=".5"/><stop offset="1" stop-color="#8a6bff" stop-opacity="0"/></linearGradient>
- <linearGradient id="rdBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6b4630"/><stop offset="1" stop-color="#26160b"/></linearGradient>
- <linearGradient id="slRed" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5a64"/><stop offset=".6" stop-color="#c8192b"/><stop offset="1" stop-color="#6e0c1b"/></linearGradient>
+ <linearGradient id="rdBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#27324f"/><stop offset="1" stop-color="#090e1e"/></linearGradient>
+ <linearGradient id="slRed" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c0303c"/><stop offset=".6" stop-color="#7a1220"/><stop offset="1" stop-color="#2a060c"/></linearGradient>
  <linearGradient id="gdG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3b8"/><stop offset=".5" stop-color="#f2c14e"/><stop offset="1" stop-color="#a9741a"/></linearGradient>
  <linearGradient id="snG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9f1ff"/><stop offset="1" stop-color="#9db4de"/></linearGradient>
  <radialGradient id="redGlow"><stop offset="0" stop-color="#ff4b4b" stop-opacity=".95"/><stop offset="1" stop-color="#ff4b4b" stop-opacity="0"/></radialGradient>
@@ -69,7 +69,7 @@ const svg=`<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmln
 <g><ellipse class="aur" cx="500" cy="230" rx="620" ry="150" fill="url(#auR)" transform="rotate(-8 500 230)"/><ellipse class="aur a2" cx="1100" cy="150" rx="560" ry="120" fill="url(#auR)" opacity=".8" transform="rotate(6 1100 150)"/></g>
 ${stars}
 <circle cx="1180" cy="230" r="260" fill="url(#moonGlow)"/>
-<circle cx="1180" cy="230" r="112" fill="url(#moonG)"/><circle cx="1148" cy="200" r="16" fill="#d8cc9a" opacity=".5"/><circle cx="1214" cy="262" r="22" fill="#d8cc9a" opacity=".4"/><circle cx="1196" cy="190" r="9" fill="#d8cc9a" opacity=".45"/><circle cx="1130" cy="262" r="11" fill="#d8cc9a" opacity=".4"/>
+<clipPath id="mclip"><circle cx="1180" cy="230" r="118"/></clipPath><image href="images/moon.jpg" x="1050" y="100" width="260" height="260" clip-path="url(#mclip)" preserveAspectRatio="xMidYMid slice"/><circle cx="1180" cy="230" r="118" fill="url(#moonLimb)"/><circle cx="1180" cy="230" r="124" fill="none" stroke="#fff6cc" stroke-opacity=".18" stroke-width="6"/>
 
 <path d="M0 700 Q200 640 420 690 T820 670 T1240 690 T1600 650 V900 H0Z" fill="#1a2f63"/>
 <path d="M0 750 Q260 700 520 740 T1020 725 T1600 735 V900 H0Z" fill="#12234d"/>

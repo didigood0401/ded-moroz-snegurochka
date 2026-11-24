@@ -231,11 +231,11 @@ function buildStage(){
   st.innerHTML=Object.entries(SCENES).map(([k,s])=>`<div class="layer" data-s="${k}" style="--bs:${s.z*100}% auto;--bp:${bp2(s.z,s.cx)} ${bp2(s.z,s.cy)};--mx:${s.mx};background-image:url(${PHOTO})"></div>`).join('')+'<div class="glints"></div>';
   document.body.prepend(st);
   const sky=document.createElement('div');sky.id='sky';sky.setAttribute('aria-hidden','true');sky.innerHTML=window.SKY?window.SKY.svg:'';document.body.prepend(sky);
-  const sky2=document.createElement('div');sky2.id='sky2';sky2.className='skyl';sky2.setAttribute('aria-hidden','true');sky2.innerHTML=window.SKY?window.SKY.svgR:'';document.body.prepend(sky2);
+  const sky2=document.createElement('div');sky2.id='sky2';sky2.className='skyl';sky2.setAttribute('aria-hidden','true');sky2.innerHTML=(window.SKY?window.SKY.svgR:'')+[['R','images/reindeer.jpg'],['T','images/tree.jpg']].map(p=>`<div class="pbg" data-s="${p[0]}" style="background-image:url(${p[1]})"></div>`).join('')+'<div class="pvig"></div>';const bk=document.createElement('div');bk.id='bokeh';bk.setAttribute('aria-hidden','true');bk.innerHTML=Array.from({length:16},(_,i)=>`<i style="left:${(Math.random()*100).toFixed(1)}%;top:${(Math.random()*100).toFixed(1)}%;width:${(40+Math.random()*110).toFixed(0)}px;height:${(40+Math.random()*110).toFixed(0)}px;animation-delay:-${(Math.random()*20).toFixed(1)}s;animation-duration:${(16+Math.random()*16).toFixed(1)}s"></i>`).join('');document.body.prepend(bk);document.body.prepend(sky2);
   const sp=new URLSearchParams(location.search).get('scene'); if(sp)sceneBase=sp;
   setScene(); skyLoop();
 }
-function setScene(){const k=sceneHover||sceneBase;$$('#stage .layer').forEach(l=>l.classList.toggle('on',l.dataset.s===k));document.body.classList.toggle('sky-on',k==='S');document.body.classList.toggle('sky2-on',k==='R');}
+function setScene(){const k=sceneHover||sceneBase;$$('#stage .layer').forEach(l=>l.classList.toggle('on',l.dataset.s===k));document.body.classList.toggle('sky-on',k==='S');const ph=(k==='R'||k==='T');document.body.classList.toggle('sky2-on',ph);document.body.dataset.ps=ph?k:'';}
 function skyLoop(){
   const t0=performance.now();
   (function f(){requestAnimationFrame(f); if(window.SKY&&document.body.classList.contains('sky2-on'))window.SKY.updateR(px,py,0); if(!document.body.classList.contains('sky-on')||!window.SKY)return;
@@ -251,7 +251,7 @@ function sceneForRoute(page,arg){
 function onSceneScroll(){
   if(!HAS_PHOTO)return; par(); if(DEVSCENE||route()!=='/')return;
   const m=innerHeight*.5; let k='A';
-  [['how','S'],['faq','R']].forEach(([id,s])=>{const e=document.getElementById(id);if(e&&e.getBoundingClientRect().top<m)k=s;});
+  [['how','S'],['faq','R'],['finale','T']].forEach(([id,s])=>{const e=document.getElementById(id);if(e&&e.getBoundingClientRect().top<m)k=s;});
   if(k!==sceneBase){sceneBase=k;if(!sceneHover)setScene();}
 }
 function par(){const st=$('#stage');if(st)st.style.transform=`translate3d(${(-px*22).toFixed(1)}px,${(-py*14-Math.min(scrollY*.04,40)).toFixed(1)}px,0)`;}
@@ -322,7 +322,8 @@ function viewHome(){
       <details><summary>Вы выезжаете за город?</summary><p>Да, стоимость выезда уточняется при подтверждении заказа.</p></details>
       <details><summary>Как проходит оплата?</summary><p>Онлайн картой или по договорённости артисту на месте.</p></details>
     </div>
-  </section></div>`;
+  </section>
+  <section id="finale"><div class="finale-box reveal"><span class="eyebrow">Скоро Новый год</span><h2>Подарите детям настоящую сказку</h2><p>Дед Мороз и Снегурочка придут в назначенный час: с песнями, играми и подарками. Осталось выбрать дату.</p><a href="#/" class="btn" data-scroll="catalog">Выбрать программу</a></div></section></div>`;
 }
 
 const sel={date:null,time:null,dur:30,month:0};
@@ -450,10 +451,28 @@ function bindCheckout(){
   const spr=document.createElement('canvas');spr.width=spr.height=32;{const x=spr.getContext('2d'),gr=x.createRadialGradient(16,16,0,16,16,16);gr.addColorStop(0,'rgba(255,244,190,1)');gr.addColorStop(.35,'rgba(255,208,90,.5)');gr.addColorStop(1,'rgba(255,208,90,0)');x.fillStyle=gr;x.fillRect(0,0,32,32);}
   const sparks=Array.from({length:Math.min(46,Math.floor(innerWidth/30))},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,v:.15+Math.random()*.35,r:.5+Math.random()*.9,p:Math.random()*6}));
   for(let i=0;i<Math.min(110,Math.floor(innerWidth/12));i++)fl.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2.2+.7,s:Math.random()*.7+.3,p:Math.random()*6});
-  (function loop(t){
+    const mkFlake=(size,seed,blur)=>{
+    const R=a=>{seed=(seed*9301+49297)%233280;return seed/233280*a;};
+    const c=document.createElement('canvas');c.width=c.height=size*2;const x=c.getContext('2d');
+    x.translate(size,size);x.lineCap='round';x.strokeStyle='rgba(255,255,255,.96)';x.shadowColor='rgba(170,210,255,.95)';x.shadowBlur=size*.16;
+    const br=[.28+R(.12),.5+R(.1),.7+R(.08)],bl=[.3+R(.12),.22+R(.08),.14+R(.06)],plate=R(1)>.55;
+    for(let i=0;i<6;i++){x.save();x.rotate(i*Math.PI/3);
+      x.lineWidth=size*.06;x.beginPath();x.moveTo(0,0);x.lineTo(0,-size*.92);x.stroke();
+      x.lineWidth=size*.038;
+      br.forEach((t,k)=>{const L=size*bl[k],y=-size*t;x.beginPath();x.moveTo(0,y);x.lineTo(L*.87,y-L*.5);x.moveTo(0,y);x.lineTo(-L*.87,y-L*.5);x.stroke();});
+      x.beginPath();x.moveTo(-size*.07,-size*.82);x.lineTo(0,-size*.97);x.lineTo(size*.07,-size*.82);x.stroke();
+      x.restore();}
+    if(plate){x.fillStyle='rgba(235,245,255,.35)';x.beginPath();for(let i=0;i<6;i++){const a=i*Math.PI/3;x.lineTo(Math.sin(a)*size*.22,-Math.cos(a)*size*.22);}x.closePath();x.fill();}
+    x.fillStyle='rgba(255,255,255,.95)';x.beginPath();x.arc(0,0,size*.07,0,7);x.fill();
+    if(!blur)return c;
+    const o=document.createElement('canvas');o.width=o.height=size*2;const y=o.getContext('2d');y.filter='blur('+blur+'px)';y.drawImage(c,0,0);return o;
+  };
+  const sharpS=[11,23,37,59].map(s=>mkFlake(40,s,0)),blurS=[71,83,97].map(s=>mkFlake(40,s,3.4));
+  const flakes=Array.from({length:Math.min(80,Math.floor(innerWidth/18))},()=>{const r=Math.random(),L=r<.5?0:r<.88?1:2;
+    return{x:Math.random()*innerWidth,y:Math.random()*innerHeight,L,d:L===0?8+Math.random()*10:L===1?20+Math.random()*16:46+Math.random()*44,v:L===0?.25+Math.random()*.25:L===1?.6+Math.random()*.5:1.2+Math.random()*.9,a:L===0?.55:L===1?.85:.5,p:Math.random()*6,rot:Math.random()*6,rv:(Math.random()-.5)*.02,spr:L===2?blurS[(Math.random()*3)|0]:sharpS[(Math.random()*4)|0]};}).sort((a,b)=>a.L-b.L);
+  const drawFlakes=t=>{flakes.forEach(f=>{f.y+=f.v;f.x+=Math.sin(t/1300+f.p)*.25*(f.L+1)+.15*f.L;f.rot+=f.rv;if(f.y>H+f.d){f.y=-f.d;f.x=Math.random()*W;}if(f.x>W+f.d)f.x=-f.d;ctx.globalAlpha=f.a;ctx.save();ctx.translate(f.x,f.y);ctx.rotate(f.rot);ctx.drawImage(f.spr,-f.d/2,-f.d/2,f.d,f.d);ctx.restore();});};  (function loop(t){
     ctx.clearRect(0,0,W,H);ctx.fillStyle=document.documentElement.dataset.theme==='night'?'#fff':'#9db8dc';
-    fl.forEach(f=>{f.y+=f.s+f.r*.12;f.x+=Math.sin(t/1400+f.p)*.35;if(f.y>H+5){f.y=-5;f.x=Math.random()*W;}
-      ctx.globalAlpha=.4+f.r/5;ctx.beginPath();ctx.arc(f.x,f.y,f.r,0,7);ctx.fill();});
+    drawFlakes(t);
     ctx.globalCompositeOperation='lighter';
     sparks.forEach(s=>{s.y-=s.v;s.x+=Math.sin(t/900+s.p)*.3;if(s.y<-20){s.y=H+20;s.x=Math.random()*W;}ctx.globalAlpha=(.3+.7*Math.abs(Math.sin(t/700+s.p)))*.8;const r=s.r*14;ctx.drawImage(spr,s.x-r/2,s.y-r/2,r,r);});
     ctx.globalCompositeOperation='source-over';
