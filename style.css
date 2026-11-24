@@ -438,3 +438,7 @@ body[data-ps=""] #sky2 svg{opacity:.001}
 #sky,#sky2{transition:opacity 2.2s cubic-bezier(.4,0,.2,1)}
 #stage{transition:transform .6s ease-out,opacity 2s cubic-bezier(.4,0,.2,1)}
 .photo-mode .item .th{border:0;border-radius:0;background:none;-webkit-mask-image:radial-gradient(closest-side,#000 60%,transparent 100%);mask-image:radial-gradient(closest-side,#000 60%,transparent 100%)}
+
+/* ветки секций: целиком над заголовком, с запасом */
+.fir.small{top:auto;bottom:calc(100% - 38px);width:clamp(90px,9vw,140px)}
+.fir.small{bottom:calc(100% - 52px)}
