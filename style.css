@@ -419,3 +419,8 @@ body[data-ps=""] #sky2 svg{opacity:.001}
 #stage .layer[data-s="M"]{filter:saturate(1.05) brightness(.95)}
 #stage .layer[data-s="T"]{filter:saturate(1.08) contrast(1.04)}
 
+
+/* ветки в секциях: выше заголовков, чтобы не закрывали текст */
+.fir.small{top:-64px;width:clamp(110px,13vw,190px)}
+.fir.small.tr{right:1vw}
+.fir.tl{left:-6px}
